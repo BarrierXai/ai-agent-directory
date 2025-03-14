@@ -133,7 +133,7 @@ const EXTENDED_DATA: Agent[] = [
   {
     id: '10',
     name: 'Semantic Kernel',
-    description: 'Microsoft's AI orchestration SDK for context-aware AI experiences',
+    description: 'Microsoft\'s AI orchestration SDK for context-aware AI experiences',
     stars: 14500,
     forks: 1870,
     url: 'https://github.com/microsoft/semantic-kernel',
@@ -161,7 +161,7 @@ const EXTENDED_DATA: Agent[] = [
   {
     id: '12',
     name: 'AutoGen',
-    description: 'Microsoft's multi-agent conversation framework',
+    description: 'Microsoft\'s multi-agent conversation framework',
     stars: 11500,
     forks: 1320,
     url: 'https://github.com/microsoft/autogen',
