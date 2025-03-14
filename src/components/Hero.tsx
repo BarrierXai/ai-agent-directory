@@ -1,7 +1,9 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
+import SearchBar from './SearchBar';
 import { useInView } from '../utils/animations';
+import { GitHubService } from '../services/GitHubService';
 
 interface HeroProps {
   onSearch: (query: string) => void;
@@ -10,16 +12,17 @@ interface HeroProps {
 const Hero = ({ onSearch }: HeroProps) => {
   const heroRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(heroRef, '-100px');
-  const [searchQuery, setSearchQuery] = useState('');
   const [isVisible, setIsVisible] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState('');
 
   useEffect(() => {
     setIsVisible(true);
+    setLastUpdated(GitHubService.getLastUpdatedTimestamp());
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(searchQuery);
+  const handleRefresh = async () => {
+    const { timestamp } = await GitHubService.refreshAgentData();
+    setLastUpdated(timestamp);
   };
 
   return (
@@ -54,62 +57,53 @@ const Hero = ({ onSearch }: HeroProps) => {
           Explore the cutting-edge world of AI agents and open-source projects, all meticulously cataloged and regularly updated for developers, researchers, and enthusiasts.
         </p>
         
-        <form 
-          onSubmit={handleSearch}
-          className="relative max-w-2xl mx-auto"
-        >
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              className="block w-full pl-10 pr-3 py-4 border border-gray-300 rounded-xl bg-white/70 backdrop-blur-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-lg transition-all duration-200 text-gray-900"
-              placeholder="Search AI agents, tools, or frameworks..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="absolute inset-y-0 right-0 flex items-center px-4 text-white bg-gray-900 rounded-r-xl hover:bg-gray-800 transition-colors"
-            >
-              Search
-            </button>
-          </div>
+        <div className="max-w-2xl mx-auto">
+          <SearchBar 
+            defaultValue="" 
+            onSearch={onSearch} 
+            onRefresh={handleRefresh}
+            lastUpdated={GitHubService.formatLastUpdated(lastUpdated)}
+          />
+          
           <div className="mt-3 flex flex-wrap justify-center gap-2 text-sm text-gray-600">
             <span className="text-gray-500">Popular:</span>
             <button 
               type="button"
-              onClick={() => {
-                setSearchQuery('autonomous');
-                onSearch('autonomous');
-              }}
+              onClick={() => onSearch('autonomous')}
               className="hover:text-gray-900 transition-colors"
             >
               Autonomous
             </button>
             <button 
               type="button"
-              onClick={() => {
-                setSearchQuery('LangChain');
-                onSearch('LangChain');
-              }}
+              onClick={() => onSearch('LangChain')}
               className="hover:text-gray-900 transition-colors"
             >
               LangChain
             </button>
             <button 
               type="button"
-              onClick={() => {
-                setSearchQuery('GPT');
-                onSearch('GPT');
-              }}
+              onClick={() => onSearch('GPT')}
               className="hover:text-gray-900 transition-colors"
             >
               GPT
             </button>
+            <button 
+              type="button"
+              onClick={() => onSearch('Dify')}
+              className="hover:text-gray-900 transition-colors"
+            >
+              Dify
+            </button>
+            <button 
+              type="button"
+              onClick={() => onSearch('MCP')}
+              className="hover:text-gray-900 transition-colors"
+            >
+              MCP
+            </button>
           </div>
-        </form>
+        </div>
       </div>
       
       <div 

@@ -1,11 +1,27 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import DirectoryGrid from '../components/DirectoryGrid';
+import { GitHubService } from '../services/GitHubService';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Set up auto-refresh once per day
+  useEffect(() => {
+    // Check if we should refresh (once per day)
+    const lastRefresh = localStorage.getItem('lastAgentRefresh');
+    const now = new Date();
+    
+    if (!lastRefresh || (now.getTime() - new Date(lastRefresh).getTime() > 24 * 60 * 60 * 1000)) {
+      // It's been more than a day, refresh data
+      GitHubService.refreshAgentData().then(() => {
+        // Save the refresh time
+        localStorage.setItem('lastAgentRefresh', now.toISOString());
+      });
+    }
+  }, []);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);

@@ -4,10 +4,10 @@ import AgentCard from './AgentCard';
 import { Agent, FilterOptions, SortOption } from '../types';
 import Filters from './Filters';
 import { GitHubService } from '../services/GitHubService';
-import SearchBar from './SearchBar';
 import { Button } from './ui/button';
 import PaginationControl from './PaginationControl';
 import { paginateData } from '../utils/pagination';
+import { toast } from '@/components/ui/use-toast';
 
 interface DirectoryGridProps {
   initialSearchQuery?: string;
@@ -17,13 +17,14 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [filteredAgents, setFilteredAgents] = useState<Agent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [languages, setLanguages] = useState<string[]>([]);
+  const [lastUpdated, setLastUpdated] = useState<string>('');
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     language: null,
     sort: 'stars',
     searchQuery: initialSearchQuery,
   });
-  const [scrollPosition, setScrollPosition] = useState(0);
   const directoryRef = useRef<HTMLDivElement>(null);
   
   // Pagination state
@@ -73,14 +74,31 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
         
         // Set the actual agents
         setAgents(data);
+        
+        // Set last updated timestamp
+        setLastUpdated(GitHubService.getLastUpdatedTimestamp());
       } catch (error) {
         console.error('Error loading agents:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load AI agents. Please try again.",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     loadAgents();
+    
+    // Set up daily auto-refresh (in a real app, would use a more sophisticated approach)
+    const autoRefreshInterval = setInterval(() => {
+      handleRefresh();
+    }, 24 * 60 * 60 * 1000); // 24 hours
+    
+    return () => {
+      clearInterval(autoRefreshInterval);
+    };
   }, []);
 
   // Apply filters
@@ -113,6 +131,11 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
             result = sortAgents(result, filterOptions.sort);
           } catch (error) {
             console.error('Error searching agents:', error);
+            toast({
+              title: "Error",
+              description: "Search failed. Please try again.",
+              variant: "destructive",
+            });
           } finally {
             setIsLoading(false);
           }
@@ -129,18 +152,6 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
       applyFilters();
     }
   }, [agents, filterOptions]);
-
-  // Handle scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollPosition(window.scrollY);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   const sortAgents = (agents: Agent[], sort: SortOption): Agent[] => {
     switch (sort) {
@@ -179,20 +190,35 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
       directoryRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
-
-  const isSearchSticky = scrollPosition > 400;
+  
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      const { agents: refreshedAgents, timestamp } = await GitHubService.refreshAgentData();
+      
+      // Update the agents state
+      setAgents(refreshedAgents);
+      setLastUpdated(timestamp);
+      
+      toast({
+        title: "Success",
+        description: "AI agent directory has been refreshed with the latest data.",
+      });
+    } catch (error) {
+      console.error('Error refreshing agents:', error);
+      toast({
+        title: "Error",
+        description: "Failed to refresh agent data. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   return (
     <div ref={directoryRef} className="py-8 px-4 md:px-8 max-w-7xl mx-auto">
       <div className="space-y-8">
-        <div className={`transition-all duration-300 ${isSearchSticky ? 'mb-24' : ''}`}>
-          <SearchBar 
-            defaultValue={filterOptions.searchQuery} 
-            onSearch={handleSearch} 
-            isSticky={isSearchSticky} 
-          />
-        </div>
-        
         <Filters 
           onLanguageChange={handleLanguageChange}
           onSortChange={handleSortChange}
@@ -208,8 +234,31 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
                 ? `Results for "${filterOptions.searchQuery}"`
                 : 'Featured AI Agent Projects'}
             </h2>
-            <div className="text-sm text-gray-500">
-              {filteredAgents.length} {filteredAgents.length === 1 ? 'project' : 'projects'}
+            <div className="flex items-center gap-2">
+              <div className="text-sm text-gray-500">
+                {filteredAgents.length} {filteredAgents.length === 1 ? 'project' : 'projects'}
+              </div>
+              <div className="text-sm text-gray-500">
+                {lastUpdated && `Last updated: ${GitHubService.formatLastUpdated(lastUpdated)}`}
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                className="flex items-center gap-2"
+              >
+                <svg 
+                  className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                {isRefreshing ? 'Refreshing...' : 'Refresh'}
+              </Button>
             </div>
           </div>
           

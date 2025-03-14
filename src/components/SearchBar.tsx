@@ -1,16 +1,25 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, RefreshCw } from 'lucide-react';
 
 interface SearchBarProps {
   defaultValue?: string;
   onSearch: (query: string) => void;
+  onRefresh?: () => void;
+  lastUpdated?: string;
   isSticky?: boolean;
 }
 
-const SearchBar = ({ defaultValue = '', onSearch, isSticky = false }: SearchBarProps) => {
+const SearchBar = ({ 
+  defaultValue = '', 
+  onSearch, 
+  onRefresh, 
+  lastUpdated,
+  isSticky = false 
+}: SearchBarProps) => {
   const [query, setQuery] = useState(defaultValue);
   const [isFocused, setIsFocused] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -28,6 +37,18 @@ const SearchBar = ({ defaultValue = '', onSearch, isSticky = false }: SearchBarP
   const clearSearch = () => {
     setQuery('');
     onSearch('');
+  };
+  
+  const handleRefresh = () => {
+    if (onRefresh) {
+      setIsRefreshing(true);
+      onRefresh();
+      
+      // Reset the refreshing state after animation
+      setTimeout(() => {
+        setIsRefreshing(false);
+      }, 1000);
+    }
   };
 
   return (
@@ -64,9 +85,19 @@ const SearchBar = ({ defaultValue = '', onSearch, isSticky = false }: SearchBarP
             <button
               type="button"
               onClick={clearSearch}
-              className="absolute inset-y-0 right-12 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute inset-y-0 right-24 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition-colors"
             >
               <X className="h-4 w-4" />
+            </button>
+          )}
+          {onRefresh && (
+            <button
+              type="button"
+              onClick={handleRefresh}
+              className="absolute inset-y-0 right-12 flex items-center text-gray-400 hover:text-gray-600 transition-colors px-2"
+              title="Refresh agent directory"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             </button>
           )}
           <button
@@ -76,6 +107,12 @@ const SearchBar = ({ defaultValue = '', onSearch, isSticky = false }: SearchBarP
             Search
           </button>
         </div>
+        
+        {lastUpdated && (
+          <div className="text-xs text-gray-500 mt-1 text-right">
+            Last updated: {lastUpdated}
+          </div>
+        )}
       </form>
     </div>
   );

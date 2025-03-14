@@ -1,7 +1,7 @@
 
 import { Agent } from '../types';
 
-// Extended data set with over 1000 projects (showing a subset for brevity, would include more in production)
+// Extended data set with AI agents
 const EXTENDED_DATA: Agent[] = [
   {
     id: '1',
@@ -299,8 +299,138 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['ide', 'mcp', 'visual-programming', 'ai-tools'],
     license: 'Apache-2.0'
   },
-  // Additional projects would be included here to reach 1000+
+  // Additional projects to expand the dataset
+  {
+    id: '22',
+    name: 'Dify',
+    description: 'The next-gen development platform for building AI applications with LLMs',
+    stars: 12800,
+    forks: 1750,
+    url: 'https://github.com/langgenius/dify',
+    owner: 'langgenius',
+    avatar: 'https://avatars.githubusercontent.com/u/121435956?v=4',
+    language: 'Python',
+    updated: '2023-12-05',
+    topics: ['llm', 'ai-applications', 'development-platform', 'agents'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '23',
+    name: 'SkyVern',
+    description: 'Visual AI agents that convert UI designs to production-ready code',
+    stars: 8700,
+    forks: 520,
+    url: 'https://github.com/skyvern-ai/skyvern',
+    owner: 'skyvern-ai',
+    avatar: 'https://avatars.githubusercontent.com/u/148071996?v=4',
+    language: 'Python',
+    updated: '2023-12-02',
+    topics: ['visual-ai', 'ui-generation', 'code-generation', 'agents'],
+    license: 'MIT'
+  },
+  {
+    id: '24',
+    name: 'LLaMA Index',
+    description: 'Data framework for building LLM applications with context augmentation',
+    stars: 25600,
+    forks: 3100,
+    url: 'https://github.com/run-llama/llama_index',
+    owner: 'run-llama',
+    avatar: 'https://avatars.githubusercontent.com/u/132556209?v=4',
+    language: 'Python',
+    updated: '2023-12-07',
+    topics: ['llm', 'rag', 'context', 'indexing', 'agents'],
+    license: 'MIT'
+  },
+  {
+    id: '25',
+    name: 'Ollama',
+    description: 'Get up and running with Llama 2, Mistral, and other large language models locally',
+    stars: 37200,
+    forks: 2950,
+    url: 'https://github.com/ollama/ollama',
+    owner: 'ollama',
+    avatar: 'https://avatars.githubusercontent.com/u/123993590?v=4',
+    language: 'Go',
+    updated: '2023-12-08',
+    topics: ['llm', 'local-inference', 'ai', 'language-model'],
+    license: 'MIT'
+  },
+  {
+    id: '26',
+    name: 'Flowise',
+    description: 'Drag & drop UI to build LLM apps',
+    stars: 18900,
+    forks: 1980,
+    url: 'https://github.com/FlowiseAI/Flowise',
+    owner: 'FlowiseAI',
+    avatar: 'https://avatars.githubusercontent.com/u/128228804?v=4',
+    language: 'TypeScript',
+    updated: '2023-12-05',
+    topics: ['low-code', 'llm', 'workflows', 'ui-builder'],
+    license: 'MIT'
+  },
+  {
+    id: '27',
+    name: 'Chroma',
+    description: 'The AI-native open-source embedding database',
+    stars: 9300,
+    forks: 860,
+    url: 'https://github.com/chroma-core/chroma',
+    owner: 'chroma-core',
+    avatar: 'https://avatars.githubusercontent.com/u/120295567?v=4',
+    language: 'Python',
+    updated: '2023-12-04',
+    topics: ['vector-database', 'embeddings', 'rag', 'ai'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '28',
+    name: 'MemGPT',
+    description: 'Teaching LLMs memory management for unbounded context',
+    stars: 16700,
+    forks: 1320,
+    url: 'https://github.com/cpacker/MemGPT',
+    owner: 'cpacker',
+    avatar: 'https://avatars.githubusercontent.com/u/5705376?v=4',
+    language: 'Python',
+    updated: '2023-12-03',
+    topics: ['memory-management', 'llm', 'context-window', 'agents'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '29',
+    name: 'LocalAI',
+    description: 'Self-hosted, community-driven, local OpenAI compatible API',
+    stars: 14800,
+    forks: 1180,
+    url: 'https://github.com/localai/localai',
+    owner: 'localai',
+    avatar: 'https://avatars.githubusercontent.com/u/142581696?v=4',
+    language: 'Go',
+    updated: '2023-12-07',
+    topics: ['local-inference', 'openai-compatible', 'api', 'llm'],
+    license: 'MIT'
+  },
+  {
+    id: '30',
+    name: 'MiniAGI',
+    description: 'Minimalist, transparent implementation of an autonomous agent powered by LLMs',
+    stars: 2400,
+    forks: 290,
+    url: 'https://github.com/muellerberndt/mini-agi',
+    owner: 'muellerberndt',
+    avatar: 'https://avatars.githubusercontent.com/u/559391?v=4',
+    language: 'Python',
+    updated: '2023-11-29',
+    topics: ['agent', 'autonomous', 'llm', 'minimal'],
+    license: 'MIT'
+  },
+  // Would add more agents in production to reach 1000+
 ];
+
+// For storing when data was last updated
+let lastUpdatedTimestamp = new Date().toISOString();
 
 export class GitHubService {
   // This would be replaced with an actual API call in production
@@ -337,5 +467,48 @@ export class GitHubService {
         resolve(paginatedData);
       }, 400);
     });
+  }
+  
+  static async refreshAgentData(): Promise<{ agents: Agent[], timestamp: string }> {
+    // In a real app, this would call the GitHub API to get fresh data
+    // For now, we'll simulate a refresh by updating timestamps and randomizing stars/forks slightly
+    
+    const refreshedData = EXTENDED_DATA.map(agent => {
+      // Simulate small changes in stars and forks
+      const starsChange = Math.floor(Math.random() * 100) - 20; // -20 to +80
+      const forksChange = Math.floor(Math.random() * 30) - 5;   // -5 to +25
+      
+      return {
+        ...agent,
+        stars: Math.max(0, agent.stars + starsChange),
+        forks: Math.max(0, agent.forks + forksChange),
+        updated: new Date().toISOString().split('T')[0] // Today's date
+      };
+    });
+    
+    // Update the global data
+    // In a real app, this would actually fetch from GitHub API
+    EXTENDED_DATA.splice(0, EXTENDED_DATA.length, ...refreshedData);
+    
+    // Update the timestamp
+    lastUpdatedTimestamp = new Date().toISOString();
+    
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          agents: refreshedData,
+          timestamp: lastUpdatedTimestamp
+        });
+      }, 1200); // Simulate longer loading for a refresh
+    });
+  }
+  
+  static getLastUpdatedTimestamp(): string {
+    return lastUpdatedTimestamp;
+  }
+  
+  static formatLastUpdated(timestamp: string): string {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
   }
 }
