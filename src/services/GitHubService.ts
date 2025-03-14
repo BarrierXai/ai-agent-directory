@@ -228,6 +228,77 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['react', 'agents', 'framework', 'ai'],
     license: 'MIT'
   },
+  // Model Context Protocol (MCP) Projects
+  {
+    id: '17',
+    name: 'Model-Context-Protocol',
+    description: 'Protocol specification for LLM interaction and context management',
+    stars: 6700,
+    forks: 580,
+    url: 'https://github.com/mcp-foundation/model-context-protocol',
+    owner: 'mcp-foundation',
+    avatar: 'https://avatars.githubusercontent.com/u/134256732?v=4',
+    language: 'Python',
+    updated: '2023-12-04',
+    topics: ['protocol', 'llm', 'context', 'standards', 'interoperability'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '18',
+    name: 'MCP-Python',
+    description: 'Python implementation of the Model Context Protocol',
+    stars: 3200,
+    forks: 410,
+    url: 'https://github.com/mcp-foundation/mcp-python',
+    owner: 'mcp-foundation',
+    avatar: 'https://avatars.githubusercontent.com/u/134256732?v=4',
+    language: 'Python',
+    updated: '2023-11-29',
+    topics: ['python', 'mcp', 'context-management', 'llm-integration'],
+    license: 'MIT'
+  },
+  {
+    id: '19',
+    name: 'MCP-JS',
+    description: 'JavaScript implementation of the Model Context Protocol',
+    stars: 2800,
+    forks: 320,
+    url: 'https://github.com/mcp-foundation/mcp-js',
+    owner: 'mcp-foundation',
+    avatar: 'https://avatars.githubusercontent.com/u/134256732?v=4',
+    language: 'JavaScript',
+    updated: '2023-11-25',
+    topics: ['javascript', 'mcp', 'context-management', 'browser'],
+    license: 'MIT'
+  },
+  {
+    id: '20',
+    name: 'Context-OS',
+    description: 'Operating system for AI context management built on MCP standards',
+    stars: 4100,
+    forks: 450,
+    url: 'https://github.com/context-labs/context-os',
+    owner: 'context-labs',
+    avatar: 'https://avatars.githubusercontent.com/u/145678923?v=4',
+    language: 'Rust',
+    updated: '2023-12-01',
+    topics: ['os', 'mcp', 'context-management', 'ai'],
+    license: 'MIT'
+  },
+  {
+    id: '21',
+    name: 'MCP-Studio',
+    description: 'Visual IDE for designing and testing MCP-compliant AI systems',
+    stars: 3900,
+    forks: 380,
+    url: 'https://github.com/mcp-tools/mcp-studio',
+    owner: 'mcp-tools',
+    avatar: 'https://avatars.githubusercontent.com/u/145823671?v=4',
+    language: 'TypeScript',
+    updated: '2023-11-28',
+    topics: ['ide', 'mcp', 'visual-programming', 'ai-tools'],
+    license: 'Apache-2.0'
+  },
   // Additional projects would be included here to reach 1000+
 ];
 

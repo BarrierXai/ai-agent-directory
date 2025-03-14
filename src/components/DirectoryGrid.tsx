@@ -1,11 +1,13 @@
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import AgentCard from './AgentCard';
 import { Agent, FilterOptions, SortOption } from '../types';
 import Filters from './Filters';
 import { GitHubService } from '../services/GitHubService';
 import SearchBar from './SearchBar';
 import { Button } from './ui/button';
+import PaginationControl from './PaginationControl';
+import { paginateData } from '../utils/pagination';
 
 interface DirectoryGridProps {
   initialSearchQuery?: string;
@@ -23,9 +25,22 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
   });
   const [scrollPosition, setScrollPosition] = useState(0);
   const directoryRef = useRef<HTMLDivElement>(null);
+  
+  // Pagination state
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const pageSize = 12;
+  
+  // Calculate total pages
+  const totalPages = useMemo(() => {
+    if (filteredAgents.length === 0) return 1;
+    return Math.ceil(filteredAgents.length / pageSize);
+  }, [filteredAgents, pageSize]);
+  
+  // Get paginated data for current view
+  const currentPageData = useMemo(() => {
+    return paginateData(filteredAgents, page, pageSize);
+  }, [filteredAgents, page, pageSize]);
 
   // Load agents
   useEffect(() => {
@@ -49,20 +64,15 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
           isLoading: true
         })));
 
-        // Fetch the actual agents
-        const data = await GitHubService.fetchPaginatedAgents(page, pageSize);
-        
-        if (data.length < pageSize) {
-          setHasMore(false);
-        }
+        // Fetch all agents
+        const data = await GitHubService.fetchAgents();
         
         // Extract unique languages
-        const allData = await GitHubService.fetchAgents();
-        const uniqueLanguages = Array.from(new Set(allData.map(agent => agent.language))).sort();
+        const uniqueLanguages = Array.from(new Set(data.map(agent => agent.language))).sort();
         setLanguages(uniqueLanguages);
         
         // Set the actual agents
-        setAgents(prev => page === 1 ? data : [...prev.filter(a => !a.isLoading), ...data]);
+        setAgents(data);
       } catch (error) {
         console.error('Error loading agents:', error);
       } finally {
@@ -71,7 +81,7 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
     };
 
     loadAgents();
-  }, [page]);
+  }, []);
 
   // Apply filters
   useEffect(() => {
@@ -110,6 +120,9 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
       }
       
       setFilteredAgents(result);
+      
+      // Reset to first page when filters change
+      setPage(1);
     };
     
     if (!agents.some(agent => agent.isLoading)) {
@@ -158,9 +171,12 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
     setFilterOptions({ ...filterOptions, sort });
   };
   
-  const loadMore = () => {
-    if (!isLoading && hasMore) {
-      setPage(prevPage => prevPage + 1);
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    
+    // Scroll to top of directory when changing pages
+    if (directoryRef.current) {
+      directoryRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
@@ -212,21 +228,17 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {(isLoading && page === 1 ? agents : filteredAgents).map((agent) => (
+                {(isLoading && page === 1 ? agents : currentPageData).map((agent) => (
                   <AgentCard key={agent.id} agent={agent} />
                 ))}
               </div>
               
-              {!filterOptions.searchQuery && hasMore && (
-                <div className="flex justify-center mt-10">
-                  <Button 
-                    onClick={loadMore}
-                    disabled={isLoading}
-                    className="px-8 py-2"
-                  >
-                    {isLoading ? 'Loading...' : 'Load More Projects'}
-                  </Button>
-                </div>
+              {filteredAgents.length > 0 && (
+                <PaginationControl 
+                  currentPage={page} 
+                  totalPages={totalPages} 
+                  onPageChange={handlePageChange} 
+                />
               )}
             </>
           )}
