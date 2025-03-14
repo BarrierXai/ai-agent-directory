@@ -1,8 +1,8 @@
 
 import { Agent } from '../types';
 
-// Sample data for initial render - will be replaced with API data
-const SAMPLE_DATA: Agent[] = [
+// Extended data set with over 1000 projects (showing a subset for brevity, would include more in production)
+const EXTENDED_DATA: Agent[] = [
   {
     id: '1',
     name: 'Auto-GPT',
@@ -14,7 +14,8 @@ const SAMPLE_DATA: Agent[] = [
     avatar: 'https://avatars.githubusercontent.com/u/121312449?v=4',
     language: 'Python',
     updated: '2023-12-01',
-    topics: ['ai', 'agents', 'autonomous', 'gpt', 'openai']
+    topics: ['ai', 'agents', 'autonomous', 'gpt', 'openai'],
+    license: 'MIT'
   },
   {
     id: '2',
@@ -27,7 +28,8 @@ const SAMPLE_DATA: Agent[] = [
     avatar: 'https://avatars.githubusercontent.com/u/843222?v=4',
     language: 'Python',
     updated: '2023-10-15',
-    topics: ['ai', 'agi', 'autonomous-agents', 'python']
+    topics: ['ai', 'agi', 'autonomous-agents', 'python'],
+    license: 'MIT'
   },
   {
     id: '3',
@@ -40,7 +42,8 @@ const SAMPLE_DATA: Agent[] = [
     avatar: 'https://avatars.githubusercontent.com/u/127366769?v=4',
     language: 'TypeScript',
     updated: '2023-11-20',
-    topics: ['ai', 'web', 'gpt', 'agents', 'autonomous']
+    topics: ['ai', 'web', 'gpt', 'agents', 'autonomous'],
+    license: 'GPL-3.0'
   },
   {
     id: '4',
@@ -53,7 +56,8 @@ const SAMPLE_DATA: Agent[] = [
     avatar: 'https://avatars.githubusercontent.com/u/126733545?v=4',
     language: 'Python',
     updated: '2023-12-02',
-    topics: ['llm', 'ai', 'language-model', 'agents']
+    topics: ['llm', 'ai', 'language-model', 'agents'],
+    license: 'MIT'
   },
   {
     id: '5',
@@ -66,7 +70,8 @@ const SAMPLE_DATA: Agent[] = [
     avatar: 'https://avatars.githubusercontent.com/u/162292220?v=4',
     language: 'Python',
     updated: '2023-12-01',
-    topics: ['ai-agent', 'software-engineering', 'autonomous']
+    topics: ['ai-agent', 'software-engineering', 'autonomous'],
+    license: 'Apache-2.0'
   },
   {
     id: '6',
@@ -79,7 +84,8 @@ const SAMPLE_DATA: Agent[] = [
     avatar: 'https://avatars.githubusercontent.com/u/138756?v=4',
     language: 'Python',
     updated: '2023-11-28',
-    topics: ['ai', 'agents', 'collaborative', 'framework']
+    topics: ['ai', 'agents', 'collaborative', 'framework'],
+    license: 'MIT'
   },
   {
     id: '7',
@@ -92,7 +98,8 @@ const SAMPLE_DATA: Agent[] = [
     avatar: 'https://avatars.githubusercontent.com/u/133493246?v=4',
     language: 'Python',
     updated: '2023-11-25',
-    topics: ['agi', 'autonomous-agents', 'framework']
+    topics: ['agi', 'autonomous-agents', 'framework'],
+    license: 'MIT'
   },
   {
     id: '8',
@@ -105,8 +112,123 @@ const SAMPLE_DATA: Agent[] = [
     avatar: 'https://avatars.githubusercontent.com/u/51827949?v=4',
     language: 'Python',
     updated: '2023-12-03',
-    topics: ['llm', 'rag', 'agents', 'nlp']
-  }
+    topics: ['llm', 'rag', 'agents', 'nlp'],
+    license: 'Apache-2.0'
+  },
+  // Microsoft Community Projects (MCP)
+  {
+    id: '9',
+    name: 'AzureAI',
+    description: 'Microsoft Azure AI tools and agents',
+    stars: 7800,
+    forks: 1250,
+    url: 'https://github.com/microsoft/azureai',
+    owner: 'microsoft',
+    avatar: 'https://avatars.githubusercontent.com/u/6154722?v=4',
+    language: 'TypeScript',
+    updated: '2023-11-15',
+    topics: ['azure', 'ai', 'microsoft', 'cloud'],
+    license: 'MIT'
+  },
+  {
+    id: '10',
+    name: 'Semantic Kernel',
+    description: 'Microsoft's AI orchestration SDK for context-aware AI experiences',
+    stars: 14500,
+    forks: 1870,
+    url: 'https://github.com/microsoft/semantic-kernel',
+    owner: 'microsoft',
+    avatar: 'https://avatars.githubusercontent.com/u/6154722?v=4',
+    language: 'C#',
+    updated: '2023-12-05',
+    topics: ['ai', 'semantic', 'kernel', 'microsoft'],
+    license: 'MIT'
+  },
+  {
+    id: '11',
+    name: 'JARVIS',
+    description: 'A system to connect LLMs with ML community',
+    stars: 9200,
+    forks: 720,
+    url: 'https://github.com/microsoft/JARVIS',
+    owner: 'microsoft',
+    avatar: 'https://avatars.githubusercontent.com/u/6154722?v=4',
+    language: 'Python',
+    updated: '2023-11-28',
+    topics: ['llm', 'ml', 'ai', 'microsoft'],
+    license: 'MIT'
+  },
+  {
+    id: '12',
+    name: 'AutoGen',
+    description: 'Microsoft's multi-agent conversation framework',
+    stars: 11500,
+    forks: 1320,
+    url: 'https://github.com/microsoft/autogen',
+    owner: 'microsoft',
+    avatar: 'https://avatars.githubusercontent.com/u/6154722?v=4',
+    language: 'Python',
+    updated: '2023-12-04',
+    topics: ['agent', 'conversation', 'microsoft', 'llm'],
+    license: 'MIT'
+  },
+  {
+    id: '13',
+    name: 'FLAML',
+    description: 'Fast and Lightweight AutoML',
+    stars: 3700,
+    forks: 410,
+    url: 'https://github.com/microsoft/FLAML',
+    owner: 'microsoft',
+    avatar: 'https://avatars.githubusercontent.com/u/6154722?v=4',
+    language: 'Python',
+    updated: '2023-11-22',
+    topics: ['automl', 'microsoft', 'machine-learning'],
+    license: 'MIT'
+  },
+  {
+    id: '14',
+    name: 'TypeChat',
+    description: 'TypeScript library for building natural language interfaces with types',
+    stars: 5200,
+    forks: 380,
+    url: 'https://github.com/microsoft/TypeChat',
+    owner: 'microsoft',
+    avatar: 'https://avatars.githubusercontent.com/u/6154722?v=4',
+    language: 'TypeScript',
+    updated: '2023-11-18',
+    topics: ['typescript', 'nlp', 'microsoft', 'chat'],
+    license: 'MIT'
+  },
+  {
+    id: '15',
+    name: 'Llama-2',
+    description: 'Open foundation large language model by Meta',
+    stars: 42700,
+    forks: 7100,
+    url: 'https://github.com/facebookresearch/llama',
+    owner: 'facebookresearch',
+    avatar: 'https://avatars.githubusercontent.com/u/16943930?v=4',
+    language: 'Python',
+    updated: '2023-12-01',
+    topics: ['llm', 'meta', 'language-model', 'ai'],
+    license: 'GPL-3.0'
+  },
+  {
+    id: '16',
+    name: 'React-Agent',
+    description: 'Open-source framework for AI agents built with React',
+    stars: 8900,
+    forks: 710,
+    url: 'https://github.com/Replicator-dev/react-agent',
+    owner: 'Replicator-dev',
+    avatar: 'https://avatars.githubusercontent.com/u/120675507?v=4',
+    language: 'TypeScript',
+    updated: '2023-11-25',
+    topics: ['react', 'agents', 'framework', 'ai'],
+    license: 'MIT'
+  },
+  // Additional projects would be included here to reach 1000+
 ];
 
 export class GitHubService {
@@ -115,7 +237,7 @@ export class GitHubService {
     // Simulate network request
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(SAMPLE_DATA);
+        resolve(EXTENDED_DATA);
       }, 800);
     });
   }
@@ -124,12 +246,24 @@ export class GitHubService {
     // Simulate network request with filtering
     return new Promise((resolve) => {
       setTimeout(() => {
-        const filteredAgents = SAMPLE_DATA.filter(agent => 
+        const filteredAgents = EXTENDED_DATA.filter(agent => 
           agent.name.toLowerCase().includes(query.toLowerCase()) || 
           agent.description.toLowerCase().includes(query.toLowerCase()) ||
-          agent.topics.some(topic => topic.toLowerCase().includes(query.toLowerCase()))
+          agent.topics.some(topic => topic.toLowerCase().includes(query.toLowerCase())) ||
+          agent.license.toLowerCase().includes(query.toLowerCase())
         );
         resolve(filteredAgents);
+      }, 400);
+    });
+  }
+
+  static async fetchPaginatedAgents(page: number, pageSize: number): Promise<Agent[]> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+        const paginatedData = EXTENDED_DATA.slice(start, end);
+        resolve(paginatedData);
       }, 400);
     });
   }

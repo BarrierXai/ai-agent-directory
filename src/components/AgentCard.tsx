@@ -1,6 +1,6 @@
 
 import { useRef } from 'react';
-import { Star, GitFork, Eye, ExternalLink, Link2 } from 'lucide-react';
+import { Star, GitFork, FileText, ExternalLink } from 'lucide-react';
 import { Agent } from '../types';
 import { formatNumber, formatDate, useInView } from '../utils/animations';
 
@@ -103,6 +103,10 @@ const AgentCard = ({ agent }: AgentCardProps) => {
               <div className="flex items-center">
                 <GitFork size={16} className="text-gray-500 mr-1" />
                 <span>{formatNumber(agent.forks)}</span>
+              </div>
+              <div className="flex items-center">
+                <FileText size={16} className="text-green-500 mr-1" />
+                <span className="text-xs">{agent.license || 'No license'}</span>
               </div>
             </div>
           )}

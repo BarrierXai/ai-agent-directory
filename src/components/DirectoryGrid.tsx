@@ -5,6 +5,7 @@ import { Agent, FilterOptions, SortOption } from '../types';
 import Filters from './Filters';
 import { GitHubService } from '../services/GitHubService';
 import SearchBar from './SearchBar';
+import { Button } from './ui/button';
 
 interface DirectoryGridProps {
   initialSearchQuery?: string;
@@ -22,6 +23,9 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
   });
   const [scrollPosition, setScrollPosition] = useState(0);
   const directoryRef = useRef<HTMLDivElement>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const pageSize = 12;
 
   // Load agents
   useEffect(() => {
@@ -29,7 +33,7 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
       setIsLoading(true);
       try {
         // Create placeholder loading agents
-        setAgents(Array(8).fill(null).map((_, i) => ({
+        setAgents(Array(pageSize).fill(null).map((_, i) => ({
           id: `loading-${i}`,
           name: '',
           description: '',
@@ -41,18 +45,24 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
           language: '',
           updated: '',
           topics: [],
+          license: '',
           isLoading: true
         })));
 
         // Fetch the actual agents
-        const data = await GitHubService.fetchAgents();
+        const data = await GitHubService.fetchPaginatedAgents(page, pageSize);
+        
+        if (data.length < pageSize) {
+          setHasMore(false);
+        }
         
         // Extract unique languages
-        const uniqueLanguages = Array.from(new Set(data.map(agent => agent.language))).sort();
+        const allData = await GitHubService.fetchAgents();
+        const uniqueLanguages = Array.from(new Set(allData.map(agent => agent.language))).sort();
         setLanguages(uniqueLanguages);
         
         // Set the actual agents
-        setAgents(data);
+        setAgents(prev => page === 1 ? data : [...prev.filter(a => !a.isLoading), ...data]);
       } catch (error) {
         console.error('Error loading agents:', error);
       } finally {
@@ -61,7 +71,7 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
     };
 
     loadAgents();
-  }, []);
+  }, [page]);
 
   // Apply filters
   useEffect(() => {
@@ -133,15 +143,25 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
   };
 
   const handleSearch = (query: string) => {
+    setPage(1);
+    setHasMore(true);
     setFilterOptions({ ...filterOptions, searchQuery: query });
   };
 
   const handleLanguageChange = (language: string | null) => {
+    setPage(1);
+    setHasMore(true);
     setFilterOptions({ ...filterOptions, language });
   };
 
   const handleSortChange = (sort: SortOption) => {
     setFilterOptions({ ...filterOptions, sort });
+  };
+  
+  const loadMore = () => {
+    if (!isLoading && hasMore) {
+      setPage(prevPage => prevPage + 1);
+    }
   };
 
   const isSearchSticky = scrollPosition > 400;
@@ -190,11 +210,25 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {(isLoading ? agents : filteredAgents).map((agent) => (
-                <AgentCard key={agent.id} agent={agent} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {(isLoading && page === 1 ? agents : filteredAgents).map((agent) => (
+                  <AgentCard key={agent.id} agent={agent} />
+                ))}
+              </div>
+              
+              {!filterOptions.searchQuery && hasMore && (
+                <div className="flex justify-center mt-10">
+                  <Button 
+                    onClick={loadMore}
+                    disabled={isLoading}
+                    className="px-8 py-2"
+                  >
+                    {isLoading ? 'Loading...' : 'Load More Projects'}
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
