@@ -58,9 +58,6 @@ const Navbar = () => {
           <a href="#about" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
             About
           </a>
-          <a href="#add-project" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-            Add Project
-          </a>
           <a 
             href="https://github.com"
             target="_blank"
@@ -112,13 +109,6 @@ const Navbar = () => {
             onClick={() => setMobileMenuOpen(false)}
           >
             About
-          </a>
-          <a 
-            href="#add-project" 
-            className="text-gray-900 py-2 border-b border-gray-100"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Add Project
           </a>
           <a 
             href="https://github.com"

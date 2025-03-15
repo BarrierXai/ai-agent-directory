@@ -5,25 +5,31 @@ import Hero from '../components/Hero';
 import DirectoryGrid from '../components/DirectoryGrid';
 import { GitHubService } from '../services/GitHubService';
 import { toast } from '@/components/ui/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Agent } from '@/types';
 import { Layers, Heart } from 'lucide-react';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [featuredProjects, setFeaturedProjects] = useState<Agent[]>([]);
-  const [showContactSection, setShowContactSection] = useState(false);
 
   useEffect(() => {
     const getFeaturedProjects = async () => {
       const allAgents = await GitHubService.fetchAgents();
-      const trending = [...allAgents]
-        .sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime())
+      
+      // Filter for agents with AI Agent or MCP related topics and sort by stars
+      const aiAgentMcpProjects = allAgents.filter(agent => {
+        const topics = agent.topics.map(topic => topic.toLowerCase());
+        const nameAndDesc = (agent.name + ' ' + agent.description).toLowerCase();
+        return topics.some(t => t.includes('agent') || t.includes('mcp')) || 
+               nameAndDesc.includes('agent') || nameAndDesc.includes('mcp');
+      });
+      
+      // Sort by stars and get top 6
+      const topProjects = [...aiAgentMcpProjects]
+        .sort((a, b) => b.stars - a.stars)
         .slice(0, 6);
-      setFeaturedProjects(trending);
+        
+      setFeaturedProjects(topProjects);
     };
     
     getFeaturedProjects();
@@ -34,7 +40,7 @@ const Index = () => {
     const now = new Date();
     
     if (!lastRefresh || (now.getTime() - new Date(lastRefresh).getTime() > 24 * 60 * 60 * 1000)) {
-      GitHubService.refreshAgentData().then(() => {
+      GitHubService.refreshAgentData().then((refreshedAgents) => {
         localStorage.setItem('lastAgentRefresh', now.toISOString());
       });
     }
@@ -48,23 +54,13 @@ const Index = () => {
       directorySection.scrollIntoView({ behavior: 'smooth' });
     }
   };
-  
-  const handleAddProject = () => {
-    setShowContactSection(true);
-    setTimeout(() => {
-      const contactSection = document.getElementById('contact');
-      if (contactSection) {
-        contactSection.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
-  };
 
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
       
       <main>
-        <Hero onSearch={handleSearch} onAddProject={handleAddProject} />
+        <Hero onSearch={handleSearch} />
         
         <section id="featured" className="py-12 bg-gray-50/30">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -149,35 +145,6 @@ const Index = () => {
               <p className="text-gray-700">
                 Have questions or want to share information about an AI agent project? 
                 Email us at <a href="mailto:kasem@ie-14.com" className="text-blue-600 hover:underline">kasem@ie-14.com</a>.
-              </p>
-            </div>
-          </div>
-        </section>
-        
-        <section id="contact" className="py-16 bg-white">
-          <div className="max-w-4xl mx-auto px-4 md:px-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Us</h2>
-            
-            <div className="bg-white rounded-lg shadow-md p-8">
-              <p className="text-gray-700 mb-6">
-                Want to add your AI agent project to our directory? Send us an email with your project details.
-              </p>
-              
-              <div className="bg-gray-100 p-4 rounded-lg flex items-center mb-6">
-                <div className="bg-blue-600 p-2 rounded-full mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 font-medium">Email Address</p>
-                  <p className="text-lg font-bold">kasem@ie-14.com</p>
-                </div>
-              </div>
-              
-              <p className="text-gray-700">
-                Please include your project name, GitHub URL, description, and any other relevant information in your email.
-                We'll review your submission and get back to you within 48 hours.
               </p>
             </div>
           </div>

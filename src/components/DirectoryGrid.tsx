@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef, useMemo } from 'react';
 import AgentCard from './AgentCard';
 import { Agent, FilterOptions, SortOption } from '../types';
@@ -18,7 +19,6 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [languages, setLanguages] = useState<string[]>([]);
-  const [lastUpdated, setLastUpdated] = useState<string>('');
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     language: null,
     sort: 'stars',
@@ -65,8 +65,6 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
         setLanguages(uniqueLanguages);
         
         setAgents(data);
-        
-        setLastUpdated(GitHubService.getLastUpdatedTimestamp());
       } catch (error) {
         console.error('Error loading agents:', error);
         toast({
@@ -174,10 +172,9 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
-      const { agents: refreshedAgents, timestamp } = await GitHubService.refreshAgentData();
+      const refreshedAgents = await GitHubService.refreshAgentData();
       
       setAgents(refreshedAgents);
-      setLastUpdated(timestamp);
       
       toast({
         title: "Success",
@@ -216,9 +213,6 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
             <div className="flex items-center gap-2">
               <div className="text-sm text-gray-500">
                 {filteredAgents.length} {filteredAgents.length === 1 ? 'project' : 'projects'}
-              </div>
-              <div className="text-sm text-gray-500">
-                {lastUpdated && `Last updated: ${GitHubService.formatLastUpdated(lastUpdated)}`}
               </div>
               <Button 
                 variant="outline" 

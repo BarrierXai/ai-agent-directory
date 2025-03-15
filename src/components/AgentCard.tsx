@@ -2,7 +2,7 @@
 import { useRef } from 'react';
 import { Star, GitFork, FileText, ExternalLink } from 'lucide-react';
 import { Agent } from '../types';
-import { formatNumber, formatDate, useInView } from '../utils/animations';
+import { formatNumber, useInView } from '../utils/animations';
 
 interface AgentCardProps {
   agent: Agent;
@@ -108,14 +108,6 @@ const AgentCard = ({ agent }: AgentCardProps) => {
                 <FileText size={16} className="text-green-500 mr-1" />
                 <span className="text-xs">{agent.license || 'No license'}</span>
               </div>
-            </div>
-          )}
-          
-          {agent.isLoading ? (
-            <span className="bg-gray-200 h-4 w-20 block rounded"></span>
-          ) : (
-            <div className="text-xs text-gray-500">
-              Updated {formatDate(agent.updated)}
             </div>
           )}
         </div>
