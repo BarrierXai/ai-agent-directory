@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef, useMemo } from 'react';
 import AgentCard from './AgentCard';
 import { Agent, FilterOptions, SortOption } from '../types';
@@ -173,6 +174,7 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
     try {
       const response = await GitHubService.refreshAgentData();
       
+      // Fixed: Correctly extract the agents array from the response object
       setAgents(response.agents);
       
       toast({
