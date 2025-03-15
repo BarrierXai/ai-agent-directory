@@ -1,4 +1,5 @@
 # Welcome to Agent MCP
+An open source project directory that solely focusses on ai agents. While we love huggingface we noticed it focussed on LLMs and datasets. Agent MCP focusses on AI Agents and MCP orchestration.
 
 ## Project info
 
