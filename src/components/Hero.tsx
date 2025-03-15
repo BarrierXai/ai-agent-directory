@@ -1,15 +1,15 @@
 
 import { useRef, useEffect, useState } from 'react';
-import { Search } from 'lucide-react';
 import SearchBar from './SearchBar';
 import { useInView } from '../utils/animations';
 import { GitHubService } from '../services/GitHubService';
 
 interface HeroProps {
   onSearch: (query: string) => void;
+  onAddProject: () => void;
 }
 
-const Hero = ({ onSearch }: HeroProps) => {
+const Hero = ({ onSearch, onAddProject }: HeroProps) => {
   const heroRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(heroRef, '-100px');
   const [isVisible, setIsVisible] = useState(false);
@@ -28,44 +28,42 @@ const Hero = ({ onSearch }: HeroProps) => {
   return (
     <div 
       ref={heroRef}
-      className="relative min-h-[80vh] flex flex-col items-center justify-center px-4 pt-20 pb-32 overflow-hidden"
+      className="relative min-h-[40vh] flex flex-col items-center justify-center px-4 pt-16 pb-16 overflow-hidden"
     >
       {/* Background elements */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-soft"></div>
-        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-soft" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-1/4 right-1/3 w-80 h-80 bg-pink-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-soft" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-soft"></div>
+        <div className="absolute top-1/3 right-1/4 w-56 h-56 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-soft" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-1/4 right-1/3 w-64 h-64 bg-pink-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-soft" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div 
-        className={`max-w-5xl mx-auto text-center transition-opacity duration-1000 ease-out transform ${
+        className={`max-w-4xl mx-auto text-center transition-opacity duration-1000 ease-out transform ${
           isVisible ? 'opacity-100' : 'opacity-0'
         }`}
       >
-        <div className="inline-block mb-6 bg-black/5 backdrop-blur-md text-sm px-3 py-1 rounded-full">
-          <span className="font-medium">Discover AI Agents & Open Source Projects</span>
+        <div className="inline-block mb-4 bg-black/5 backdrop-blur-md text-sm px-3 py-1 rounded-full">
+          <span className="font-medium">1000+ Open Source Projects</span>
         </div>
         
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6 text-gray-900 tracking-tight leading-tight text-balance">
-          The definitive directory of <br className="hidden md:block" />
-          <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-purple-900 bg-clip-text text-transparent">
-            AI Agents & Projects
-          </span>
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-4 text-gray-900 tracking-tight leading-tight text-balance">
+          The <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-purple-900 bg-clip-text text-transparent">#1 directory</span> for AI Agents and MCP Orchestration
         </h1>
         
-        <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
-          Explore the cutting-edge world of AI agents and open-source projects, all meticulously cataloged and regularly updated for developers, researchers, and enthusiasts.
+        <p className="text-base md:text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
+          Your go-to resource for discovering cutting-edge AI agent projects and tools.
         </p>
         
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-xl mx-auto">
           <SearchBar 
             defaultValue="" 
             onSearch={onSearch} 
-            onRefresh={handleRefresh}
+            onAddProject={onAddProject}
             lastUpdated={GitHubService.formatLastUpdated(lastUpdated)}
+            isCompact={true}
           />
           
-          <div className="mt-3 flex flex-wrap justify-center gap-2 text-sm text-gray-600">
+          <div className="mt-2 flex flex-wrap justify-center gap-2 text-xs text-gray-600">
             <span className="text-gray-500">Popular:</span>
             <button 
               type="button"
@@ -107,7 +105,7 @@ const Hero = ({ onSearch }: HeroProps) => {
       </div>
       
       <div 
-        className={`absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent transition-opacity duration-1000 ${
+        className={`absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white via-white/80 to-transparent transition-opacity duration-1000 ${
           isInView ? 'opacity-100' : 'opacity-0'
         }`}
       ></div>

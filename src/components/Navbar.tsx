@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Github, Menu, X } from 'lucide-react';
+import { Github, Menu, X, Layers } from 'lucide-react';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -22,17 +22,25 @@ const Navbar = () => {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 md:px-8 py-4 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 md:px-8 py-3 ${
         scrolled 
           ? 'bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm' 
           : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center space-x-1">
-          <div className="text-xl md:text-2xl font-bold font-display tracking-tight">
-            <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">AI</span>
-            <span>Agents</span>
+        <div className="flex items-center space-x-2">
+          <div className="flex items-center">
+            <div className="flex items-center justify-center w-8 h-8 mr-2">
+              <div className="relative">
+                <Layers className="w-6 h-6 text-blue-600 absolute" style={{ top: -2, left: -2 }} />
+                <Layers className="w-6 h-6 text-purple-600 absolute" style={{ top: 2, left: 2 }} />
+              </div>
+            </div>
+            <div className="text-xl font-bold font-display tracking-tight">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Agent</span>
+              <span className="text-gray-900">MCP</span>
+            </div>
           </div>
           <div className="hidden md:flex items-center justify-center bg-black/5 rounded-full px-2 py-0.5 text-xs font-medium">
             Directory
@@ -40,23 +48,26 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-8">
-          <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">
+        <div className="hidden md:flex items-center space-x-6">
+          <a href="#featured" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
             Featured
           </a>
-          <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">
-            Categories
+          <a href="#directory" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            Directory
           </a>
-          <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">
+          <a href="#about" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
             About
+          </a>
+          <a href="#add-project" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            Add Project
           </a>
           <a 
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-full hover:bg-gray-800 transition-all duration-200"
+            className="flex items-center bg-gray-900 text-white px-3 py-1.5 text-sm rounded-full hover:bg-gray-800 transition-all duration-200"
           >
-            <Github size={16} className="mr-2" /> 
+            <Github size={14} className="mr-1.5" /> 
             <span>GitHub</span>
           </a>
         </div>
@@ -82,25 +93,32 @@ const Navbar = () => {
       >
         <div className="flex flex-col space-y-6 text-lg">
           <a 
-            href="#" 
+            href="#featured" 
             className="text-gray-900 py-2 border-b border-gray-100"
             onClick={() => setMobileMenuOpen(false)}
           >
             Featured
           </a>
           <a 
-            href="#" 
+            href="#directory" 
             className="text-gray-900 py-2 border-b border-gray-100"
             onClick={() => setMobileMenuOpen(false)}
           >
-            Categories
+            Directory
           </a>
           <a 
-            href="#" 
+            href="#about" 
             className="text-gray-900 py-2 border-b border-gray-100"
             onClick={() => setMobileMenuOpen(false)}
           >
             About
+          </a>
+          <a 
+            href="#add-project" 
+            className="text-gray-900 py-2 border-b border-gray-100"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Add Project
           </a>
           <a 
             href="https://github.com"

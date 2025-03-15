@@ -426,11 +426,85 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['agent', 'autonomous', 'llm', 'minimal'],
     license: 'MIT'
   },
-  // Would add more agents in production to reach 1000+
+  // Additional new entries to expand the dataset further
+  {
+    id: '31',
+    name: 'OpenLLM',
+    description: 'Operating large language models in production',
+    stars: 7800,
+    forks: 620,
+    url: 'https://github.com/bentoml/OpenLLM',
+    owner: 'bentoml',
+    avatar: 'https://avatars.githubusercontent.com/u/15758926?v=4',
+    language: 'Python',
+    updated: '2023-12-06',
+    topics: ['llm', 'production', 'deployment', 'inference'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '32',
+    name: 'HuggingGPT',
+    description: 'Leveraging LLMs to solve AI tasks using models from HuggingFace',
+    stars: 11200,
+    forks: 1350,
+    url: 'https://github.com/microsoft/guidance',
+    owner: 'microsoft',
+    avatar: 'https://avatars.githubusercontent.com/u/6154722?v=4',
+    language: 'Python',
+    updated: '2023-12-02',
+    topics: ['llm', 'huggingface', 'microsoft', 'multimodal'],
+    license: 'MIT'
+  },
+  {
+    id: '33',
+    name: 'MetaGPT',
+    description: 'Multi-agent framework that assigns roles to LLMs to solve complex tasks',
+    stars: 30100,
+    forks: 3400,
+    url: 'https://github.com/geekan/MetaGPT',
+    owner: 'geekan',
+    avatar: 'https://avatars.githubusercontent.com/u/2707039?v=4',
+    language: 'Python',
+    updated: '2023-12-07',
+    topics: ['multi-agent', 'llm', 'ai', 'framework'],
+    license: 'MIT'
+  },
+  {
+    id: '34',
+    name: 'PrivateGPT',
+    description: 'Interact privately with your documents using the power of LLMs',
+    stars: 43200,
+    forks: 5400,
+    url: 'https://github.com/imartinez/privateGPT',
+    owner: 'imartinez',
+    avatar: 'https://avatars.githubusercontent.com/u/4178351?v=4',
+    language: 'Python',
+    updated: '2023-12-05',
+    topics: ['privacy', 'llm', 'rag', 'documents'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '35',
+    name: 'LLM Agents',
+    description: 'Building and evaluating LLM agents',
+    stars: 3250,
+    forks: 310,
+    url: 'https://github.com/microsoft/LMOps',
+    owner: 'microsoft',
+    avatar: 'https://avatars.githubusercontent.com/u/6154722?v=4',
+    language: 'Python',
+    updated: '2023-11-30',
+    topics: ['llm', 'agents', 'evaluation', 'microsoft'],
+    license: 'MIT'
+  },
+  // Would add many more entries to reach 1000+ in a production system
 ];
 
 // For storing when data was last updated
 let lastUpdatedTimestamp = new Date().toISOString();
+
+// For storing user-submitted projects that are pending review
+const pendingProjects: Agent[] = [];
 
 export class GitHubService {
   // This would be replaced with an actual API call in production
@@ -503,6 +577,55 @@ export class GitHubService {
     });
   }
   
+  static async addProject(project: Partial<Agent>): Promise<{ success: boolean, message: string }> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        if (!project.name || !project.url || !project.description) {
+          resolve({
+            success: false,
+            message: 'Missing required fields: name, URL, and description are required.'
+          });
+          return;
+        }
+        
+        // In a real app, this would be stored in a database and go through approval
+        const newProject: Agent = {
+          id: `pending-${Date.now()}`,
+          name: project.name || '',
+          description: project.description || '',
+          stars: project.stars || 0,
+          forks: project.forks || 0,
+          url: project.url || '',
+          owner: project.owner || 'Unknown',
+          avatar: project.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(project.name || 'Unknown')}&background=random`,
+          language: project.language || 'Unknown',
+          updated: new Date().toISOString().split('T')[0],
+          topics: project.topics || [],
+          license: project.license || 'Unknown'
+        };
+        
+        pendingProjects.push(newProject);
+        
+        resolve({
+          success: true,
+          message: 'Project submitted successfully and is pending review.'
+        });
+      }, 800);
+    });
+  }
+  
+  static async scanSources(): Promise<void> {
+    // In a real app, this would make API calls to GitHub, Twitter, etc.
+    // For simulation purposes, we'll just add a delay
+    return new Promise((resolve) => {
+      console.log('Scanning GitHub, Twitter, and Google for new AI agent projects...');
+      setTimeout(() => {
+        console.log('Scan complete. Any new projects would be added to the database.');
+        resolve();
+      }, 3000);
+    });
+  }
+  
   static getLastUpdatedTimestamp(): string {
     return lastUpdatedTimestamp;
   }
@@ -510,5 +633,9 @@ export class GitHubService {
   static formatLastUpdated(timestamp: string): string {
     const date = new Date(timestamp);
     return date.toLocaleString();
+  }
+  
+  static getPendingProjects(): Agent[] {
+    return [...pendingProjects];
   }
 }

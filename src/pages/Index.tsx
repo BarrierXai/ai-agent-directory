@@ -4,9 +4,42 @@ import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import DirectoryGrid from '../components/DirectoryGrid';
 import { GitHubService } from '../services/GitHubService';
+import { toast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Agent } from '@/types';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [showAddProjectDialog, setShowAddProjectDialog] = useState(false);
+  const [newProject, setNewProject] = useState<Partial<Agent>>({
+    name: '',
+    description: '',
+    url: '',
+    owner: '',
+    language: '',
+    license: '',
+    topics: []
+  });
+  
+  const [featuredProjects, setFeaturedProjects] = useState<Agent[]>([]);
+
+  // Get featured projects
+  useEffect(() => {
+    const getFeaturedProjects = async () => {
+      const allAgents = await GitHubService.fetchAgents();
+      // Get top 6 trending projects
+      const trending = [...allAgents]
+        .sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime())
+        .slice(0, 6);
+      setFeaturedProjects(trending);
+    };
+    
+    getFeaturedProjects();
+  }, []);
 
   // Set up auto-refresh once per day
   useEffect(() => {
@@ -32,24 +65,171 @@ const Index = () => {
       directorySection.scrollIntoView({ behavior: 'smooth' });
     }
   };
+  
+  const handleAddProject = () => {
+    setShowAddProjectDialog(true);
+  };
+  
+  const handleSubmitProject = () => {
+    // Validate required fields
+    if (!newProject.name || !newProject.url || !newProject.description) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // In a real app, this would submit to a backend or directly to GitHub
+    toast({
+      title: "Project Submitted",
+      description: "Your project has been submitted for review and will be added to the directory soon.",
+    });
+    
+    // Close dialog and reset form
+    setShowAddProjectDialog(false);
+    setNewProject({
+      name: '',
+      description: '',
+      url: '',
+      owner: '',
+      language: '',
+      license: '',
+      topics: []
+    });
+  };
 
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
       
       <main>
-        <Hero onSearch={handleSearch} />
+        <Hero onSearch={handleSearch} onAddProject={handleAddProject} />
         
-        <div id="directory" className="bg-gray-50/50 py-12 min-h-screen">
+        {/* Featured Projects Section */}
+        <section id="featured" className="py-12 bg-gray-50/30">
+          <div className="max-w-7xl mx-auto px-4 md:px-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Featured Projects</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredProjects.map((project, index) => (
+                <div key={index} className="bg-white rounded-lg shadow-md p-5 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start mb-4">
+                    <img 
+                      src={project.avatar || "https://via.placeholder.com/40"} 
+                      alt={project.name}
+                      className="w-10 h-10 rounded-full mr-3"
+                    />
+                    <div>
+                      <h3 className="font-semibold text-lg">{project.name}</h3>
+                      <p className="text-sm text-gray-500">{project.owner}</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 text-sm mb-3 line-clamp-2">{project.description}</p>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-3 text-sm">
+                      <span className="flex items-center">
+                        <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 16 16">
+                          <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25z"/>
+                        </svg>
+                        {project.stars.toLocaleString()}
+                      </span>
+                      <span className="text-xs px-2 py-1 bg-gray-100 rounded-full">{project.language}</span>
+                    </div>
+                    <a 
+                      href={project.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                    >
+                      View Project →
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-8 text-center">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  const directorySection = document.getElementById('directory');
+                  if (directorySection) {
+                    directorySection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+              >
+                Browse All Projects
+              </Button>
+            </div>
+          </div>
+        </section>
+        
+        {/* Directory - Main Section */}
+        <div id="directory" className="bg-white py-8 min-h-screen">
           <DirectoryGrid initialSearchQuery={searchQuery} />
         </div>
+        
+        {/* About Section */}
+        <section id="about" className="py-16 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 md:px-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">About Agent MCP Directory</h2>
+            
+            <div className="bg-white rounded-lg shadow-md p-8">
+              <p className="text-gray-700 mb-6">
+                Agent MCP Directory is a project to enable access to open source AI agent projects. 
+                It's an initiative by techies for techies to support them in receiving unfiltered 
+                information about the latest developments in AI agent technology and MCP orchestration.
+              </p>
+              
+              <p className="text-gray-700 mb-6">
+                Our goal is to catalog and maintain the most comprehensive collection of open-source 
+                AI agent projects and tools. We automatically scan GitHub, Google, and X (formerly Twitter) 
+                for new projects that are tagged with "AI Agent", "AI Agents", or "MCP orchestration", 
+                ensuring our directory stays up to date with the latest innovations.
+              </p>
+              
+              <p className="text-gray-700 mb-6">
+                The directory updates daily to ensure you always have access to the most current 
+                information. We particularly highlight projects that are gaining traction, newly 
+                released with significant potential, or showing rapid growth.
+              </p>
+              
+              <h3 className="text-lg font-semibold mb-3">Our Mission</h3>
+              <p className="text-gray-700 mb-6">
+                To provide the most comprehensive, up-to-date, and accessible directory of open-source 
+                AI agent projects, enabling developers, researchers, and enthusiasts to discover, 
+                contribute to, and build upon the collective knowledge of the community.
+              </p>
+              
+              <h3 className="text-lg font-semibold mb-3">Get Involved</h3>
+              <p className="text-gray-700">
+                This directory is a community effort. If you've created or know of an open-source AI agent 
+                project that should be included, please use the "Add Project" button to submit it. 
+                Together, we can build the most valuable resource for AI agent technology.
+              </p>
+            </div>
+          </div>
+        </section>
       </main>
       
       <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-lg font-semibold mb-4">AI Agents Directory</h3>
+              <div className="flex items-center mb-4">
+                <div className="flex items-center justify-center w-8 h-8 mr-2">
+                  <div className="relative">
+                    <Layers className="w-6 h-6 text-blue-400 absolute" style={{ top: -2, left: -2 }} />
+                    <Layers className="w-6 h-6 text-purple-400 absolute" style={{ top: 2, left: 2 }} />
+                  </div>
+                </div>
+                <div className="text-xl font-bold font-display tracking-tight">
+                  <span className="text-blue-400">Agent</span>
+                  <span className="text-white">MCP</span>
+                </div>
+              </div>
               <p className="text-gray-400 text-sm">
                 The definitive resource for discovering and exploring AI agents and open-source projects.
               </p>
@@ -61,7 +241,7 @@ const Index = () => {
                 <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Autonomous Agents</a></li>
                 <li><a href="#" className="text-gray-300 hover:text-white transition-colors">LLM Frameworks</a></li>
                 <li><a href="#" className="text-gray-300 hover:text-white transition-colors">AI Tools</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Chat Models</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-colors">MCP Projects</a></li>
               </ul>
             </div>
             
@@ -87,7 +267,7 @@ const Index = () => {
           
           <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              &copy; {new Date().getFullYear()} AI Agents Directory. All rights reserved.
+              &copy; {new Date().getFullYear()} Agent MCP Directory. All rights reserved.
             </p>
             
             <div className="mt-4 md:mt-0 flex space-x-6">
@@ -107,6 +287,110 @@ const Index = () => {
           </div>
         </div>
       </footer>
+      
+      {/* Add Project Dialog */}
+      <Dialog open={showAddProjectDialog} onOpenChange={setShowAddProjectDialog}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Add Open Source Project</DialogTitle>
+            <DialogDescription>
+              Submit your open source AI agent or MCP project to be featured in our directory.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="project-name" className="text-right">Name</Label>
+              <Input 
+                id="project-name" 
+                value={newProject.name} 
+                onChange={(e) => setNewProject({...newProject, name: e.target.value})}
+                className="col-span-3" 
+                placeholder="Project name"
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="project-url" className="text-right">GitHub URL</Label>
+              <Input 
+                id="project-url" 
+                value={newProject.url} 
+                onChange={(e) => setNewProject({...newProject, url: e.target.value})}
+                className="col-span-3" 
+                placeholder="https://github.com/username/project"
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="project-desc" className="text-right">Description</Label>
+              <Textarea 
+                id="project-desc" 
+                value={newProject.description} 
+                onChange={(e) => setNewProject({...newProject, description: e.target.value})}
+                className="col-span-3" 
+                placeholder="Short description of your project"
+                rows={3}
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="project-owner" className="text-right">Owner/Organization</Label>
+              <Input 
+                id="project-owner" 
+                value={newProject.owner} 
+                onChange={(e) => setNewProject({...newProject, owner: e.target.value})}
+                className="col-span-3" 
+                placeholder="GitHub username or organization"
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="project-lang" className="text-right">Primary Language</Label>
+              <Input 
+                id="project-lang" 
+                value={newProject.language} 
+                onChange={(e) => setNewProject({...newProject, language: e.target.value})}
+                className="col-span-3" 
+                placeholder="e.g., Python, JavaScript, etc."
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="project-license" className="text-right">License</Label>
+              <Input 
+                id="project-license" 
+                value={newProject.license} 
+                onChange={(e) => setNewProject({...newProject, license: e.target.value})}
+                className="col-span-3" 
+                placeholder="e.g., MIT, Apache-2.0, etc."
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="project-topics" className="text-right">Topics</Label>
+              <Input 
+                id="project-topics" 
+                value={newProject.topics ? newProject.topics.join(', ') : ''}
+                onChange={(e) => setNewProject({
+                  ...newProject, 
+                  topics: e.target.value.split(',').map(topic => topic.trim())
+                })}
+                className="col-span-3" 
+                placeholder="ai, agents, mcp, etc. (comma separated)"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setShowAddProjectDialog(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={handleSubmitProject}>
+              Submit Project
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

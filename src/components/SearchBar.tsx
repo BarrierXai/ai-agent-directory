@@ -1,21 +1,25 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, X, RefreshCw } from 'lucide-react';
+import { Search, X, RefreshCw, Plus } from 'lucide-react';
 
 interface SearchBarProps {
   defaultValue?: string;
   onSearch: (query: string) => void;
   onRefresh?: () => void;
+  onAddProject?: () => void;
   lastUpdated?: string;
   isSticky?: boolean;
+  isCompact?: boolean;
 }
 
 const SearchBar = ({ 
   defaultValue = '', 
   onSearch, 
   onRefresh, 
+  onAddProject,
   lastUpdated,
-  isSticky = false 
+  isSticky = false,
+  isCompact = false
 }: SearchBarProps) => {
   const [query, setQuery] = useState(defaultValue);
   const [isFocused, setIsFocused] = useState(false);
@@ -55,24 +59,24 @@ const SearchBar = ({
     <div 
       className={`w-full transition-all duration-300 ${
         isSticky 
-          ? 'sticky top-20 z-30 py-4 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50' 
+          ? 'sticky top-20 z-30 py-2 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50' 
           : ''
       }`}
     >
       <form 
         onSubmit={handleSubmit}
-        className="relative max-w-2xl mx-auto"
+        className={`relative ${isCompact ? 'max-w-xl mx-auto' : 'max-w-2xl mx-auto'}`}
       >
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className={`h-5 w-5 transition-colors ${isFocused ? 'text-blue-500' : 'text-gray-400'}`} />
+            <Search className={`h-4 w-4 transition-colors ${isFocused ? 'text-blue-500' : 'text-gray-400'}`} />
           </div>
           <input
             ref={inputRef}
             type="text"
-            className={`block w-full pl-10 pr-10 py-3 border rounded-lg bg-white/90 transition-all duration-200 ${
+            className={`block w-full pl-9 pr-10 ${isCompact ? 'py-2 text-sm' : 'py-3'} border rounded-lg bg-white/90 transition-all duration-200 ${
               isFocused 
-                ? 'border-blue-500 shadow-md ring-2 ring-blue-200' 
+                ? 'border-blue-500 shadow-md ring-1 ring-blue-200' 
                 : 'border-gray-300 shadow-sm'
             }`}
             placeholder="Search AI agents, libraries, or tools..."
@@ -90,7 +94,17 @@ const SearchBar = ({
               <X className="h-4 w-4" />
             </button>
           )}
-          {onRefresh && (
+          {onAddProject && (
+            <button
+              type="button"
+              onClick={onAddProject}
+              className="absolute inset-y-0 right-12 flex items-center text-gray-400 hover:text-gray-600 transition-colors px-2"
+              title="Add new project"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          )}
+          {onRefresh && !onAddProject && (
             <button
               type="button"
               onClick={handleRefresh}
@@ -102,13 +116,13 @@ const SearchBar = ({
           )}
           <button
             type="submit"
-            className="absolute inset-y-0 right-0 flex items-center px-4 text-white bg-gray-900 rounded-r-lg hover:bg-gray-800 transition-colors"
+            className={`absolute inset-y-0 right-0 flex items-center px-3 text-white bg-gray-900 rounded-r-lg hover:bg-gray-800 transition-colors ${isCompact ? 'text-sm' : ''}`}
           >
             Search
           </button>
         </div>
         
-        {lastUpdated && (
+        {lastUpdated && !isCompact && (
           <div className="text-xs text-gray-500 mt-1 text-right">
             Last updated: {lastUpdated}
           </div>
