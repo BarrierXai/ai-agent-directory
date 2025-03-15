@@ -47,7 +47,7 @@ const Hero = ({ onSearch, onAddProject }: HeroProps) => {
         </div>
         
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-4 text-gray-900 tracking-tight leading-tight text-balance">
-          The <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-purple-900 bg-clip-text text-transparent">#1 directory</span> for AI Agents and MCP Orchestration
+          The <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-purple-900 bg-clip-text text-transparent">#1 Directory</span> for AI Agents and MCP Orchestration
         </h1>
         
         <p className="text-base md:text-lg text-gray-600 mb-6 max-w-2xl mx-auto">

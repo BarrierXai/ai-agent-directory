@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, useMemo } from 'react';
 import AgentCard from './AgentCard';
 import { Agent, FilterOptions, SortOption } from '../types';
@@ -27,28 +26,23 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
   });
   const directoryRef = useRef<HTMLDivElement>(null);
   
-  // Pagination state
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const pageSize = 12;
+  const pageSize = 24;
   
-  // Calculate total pages
   const totalPages = useMemo(() => {
     if (filteredAgents.length === 0) return 1;
     return Math.ceil(filteredAgents.length / pageSize);
   }, [filteredAgents, pageSize]);
   
-  // Get paginated data for current view
   const currentPageData = useMemo(() => {
     return paginateData(filteredAgents, page, pageSize);
   }, [filteredAgents, page, pageSize]);
 
-  // Load agents
   useEffect(() => {
     const loadAgents = async () => {
       setIsLoading(true);
       try {
-        // Create placeholder loading agents
         setAgents(Array(pageSize).fill(null).map((_, i) => ({
           id: `loading-${i}`,
           name: '',
@@ -65,17 +59,13 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
           isLoading: true
         })));
 
-        // Fetch all agents
         const data = await GitHubService.fetchAgents();
         
-        // Extract unique languages
         const uniqueLanguages = Array.from(new Set(data.map(agent => agent.language))).sort();
         setLanguages(uniqueLanguages);
         
-        // Set the actual agents
         setAgents(data);
         
-        // Set last updated timestamp
         setLastUpdated(GitHubService.getLastUpdatedTimestamp());
       } catch (error) {
         console.error('Error loading agents:', error);
@@ -91,43 +81,35 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
 
     loadAgents();
     
-    // Set up daily auto-refresh (in a real app, would use a more sophisticated approach)
     const autoRefreshInterval = setInterval(() => {
       handleRefresh();
-    }, 24 * 60 * 60 * 1000); // 24 hours
+    }, 24 * 60 * 60 * 1000);
     
     return () => {
       clearInterval(autoRefreshInterval);
     };
   }, []);
 
-  // Apply filters
   useEffect(() => {
     const applyFilters = async () => {
       let result = [...agents];
       
-      // Filter by language
       if (filterOptions.language) {
         result = result.filter(agent => agent.language === filterOptions.language);
       }
       
-      // Sort agents
       result = sortAgents(result, filterOptions.sort);
       
-      // Filter by search query
       if (filterOptions.searchQuery) {
-        // Replace with actual search if this were a real app
         if (filterOptions.searchQuery.trim() !== '') {
           setIsLoading(true);
           try {
             result = await GitHubService.searchAgents(filterOptions.searchQuery);
             
-            // Apply language filter to search results
             if (filterOptions.language) {
               result = result.filter(agent => agent.language === filterOptions.language);
             }
             
-            // Apply sort to search results
             result = sortAgents(result, filterOptions.sort);
           } catch (error) {
             console.error('Error searching agents:', error);
@@ -144,7 +126,6 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
       
       setFilteredAgents(result);
       
-      // Reset to first page when filters change
       setPage(1);
     };
     
@@ -185,7 +166,6 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
     
-    // Scroll to top of directory when changing pages
     if (directoryRef.current) {
       directoryRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -196,7 +176,6 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
     try {
       const { agents: refreshedAgents, timestamp } = await GitHubService.refreshAgentData();
       
-      // Update the agents state
       setAgents(refreshedAgents);
       setLastUpdated(timestamp);
       

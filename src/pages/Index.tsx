@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Agent } from '@/types';
-import { Layers } from 'lucide-react';
+import { Layers, Heart } from 'lucide-react';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -26,12 +26,11 @@ const Index = () => {
   });
   
   const [featuredProjects, setFeaturedProjects] = useState<Agent[]>([]);
+  const [showContactSection, setShowContactSection] = useState(false);
 
-  // Get featured projects
   useEffect(() => {
     const getFeaturedProjects = async () => {
       const allAgents = await GitHubService.fetchAgents();
-      // Get top 6 trending projects
       const trending = [...allAgents]
         .sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime())
         .slice(0, 6);
@@ -41,16 +40,12 @@ const Index = () => {
     getFeaturedProjects();
   }, []);
 
-  // Set up auto-refresh once per day
   useEffect(() => {
-    // Check if we should refresh (once per day)
     const lastRefresh = localStorage.getItem('lastAgentRefresh');
     const now = new Date();
     
     if (!lastRefresh || (now.getTime() - new Date(lastRefresh).getTime() > 24 * 60 * 60 * 1000)) {
-      // It's been more than a day, refresh data
       GitHubService.refreshAgentData().then(() => {
-        // Save the refresh time
         localStorage.setItem('lastAgentRefresh', now.toISOString());
       });
     }
@@ -59,7 +54,6 @@ const Index = () => {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     
-    // Smooth scroll to directory section
     const directorySection = document.getElementById('directory');
     if (directorySection) {
       directorySection.scrollIntoView({ behavior: 'smooth' });
@@ -67,11 +61,16 @@ const Index = () => {
   };
   
   const handleAddProject = () => {
-    setShowAddProjectDialog(true);
+    setShowContactSection(true);
+    setTimeout(() => {
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
   };
   
   const handleSubmitProject = () => {
-    // Validate required fields
     if (!newProject.name || !newProject.url || !newProject.description) {
       toast({
         title: "Missing Information",
@@ -81,13 +80,11 @@ const Index = () => {
       return;
     }
     
-    // In a real app, this would submit to a backend or directly to GitHub
     toast({
       title: "Project Submitted",
       description: "Your project has been submitted for review and will be added to the directory soon.",
     });
     
-    // Close dialog and reset form
     setShowAddProjectDialog(false);
     setNewProject({
       name: '',
@@ -107,7 +104,6 @@ const Index = () => {
       <main>
         <Hero onSearch={handleSearch} onAddProject={handleAddProject} />
         
-        {/* Featured Projects Section */}
         <section id="featured" className="py-12 bg-gray-50/30">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-8">Featured Projects</h2>
@@ -166,12 +162,10 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Directory - Main Section */}
         <div id="directory" className="bg-white py-8 min-h-screen">
           <DirectoryGrid initialSearchQuery={searchQuery} />
         </div>
         
-        {/* About Section */}
         <section id="about" className="py-16 bg-gray-50">
           <div className="max-w-4xl mx-auto px-4 md:px-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">About Agent MCP Directory</h2>
@@ -212,6 +206,35 @@ const Index = () => {
             </div>
           </div>
         </section>
+        
+        <section id="contact" className="py-16 bg-white">
+          <div className="max-w-4xl mx-auto px-4 md:px-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Us</h2>
+            
+            <div className="bg-white rounded-lg shadow-md p-8">
+              <p className="text-gray-700 mb-6">
+                Want to add your AI agent project to our directory? Send us an email with your project details.
+              </p>
+              
+              <div className="bg-gray-100 p-4 rounded-lg flex items-center mb-6">
+                <div className="bg-blue-600 p-2 rounded-full mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">Email Address</p>
+                  <p className="text-lg font-bold">kasem@ie-14.com</p>
+                </div>
+              </div>
+              
+              <p className="text-gray-700">
+                Please include your project name, GitHub URL, description, and any other relevant information in your email.
+                We'll review your submission and get back to you within 48 hours.
+              </p>
+            </div>
+          </div>
+        </section>
       </main>
       
       <footer className="bg-gray-900 text-white py-12">
@@ -222,12 +245,12 @@ const Index = () => {
                 <div className="flex items-center justify-center w-8 h-8 mr-2">
                   <div className="relative">
                     <Layers className="w-6 h-6 text-blue-400 absolute" style={{ top: -2, left: -2 }} />
-                    <Layers className="w-6 h-6 text-purple-400 absolute" style={{ top: 2, left: 2 }} />
+                    <Heart className="w-5 h-5 text-red-400 absolute" style={{ top: 0, left: 0 }} />
                   </div>
                 </div>
                 <div className="text-xl font-bold font-display tracking-tight">
                   <span className="text-blue-400">Agent</span>
-                  <span className="text-white">MCP</span>
+                  <span className="text-white"> MCP</span>
                 </div>
               </div>
               <p className="text-gray-400 text-sm">
@@ -288,7 +311,6 @@ const Index = () => {
         </div>
       </footer>
       
-      {/* Add Project Dialog */}
       <Dialog open={showAddProjectDialog} onOpenChange={setShowAddProjectDialog}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
