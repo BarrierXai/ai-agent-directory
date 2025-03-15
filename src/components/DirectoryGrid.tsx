@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, useMemo } from 'react';
 import AgentCard from './AgentCard';
 import { Agent, FilterOptions, SortOption } from '../types';
@@ -172,9 +171,9 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
-      const refreshedAgents = await GitHubService.refreshAgentData();
+      const response = await GitHubService.refreshAgentData();
       
-      setAgents(refreshedAgents);
+      setAgents(response.agents);
       
       toast({
         title: "Success",
