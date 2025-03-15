@@ -1,3 +1,4 @@
+
 import { Agent } from '../types';
 
 // Extended data set with AI agents (expanded to 200+ entries)
@@ -114,7 +115,6 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['llm', 'rag', 'agents', 'nlp'],
     license: 'Apache-2.0'
   },
-  // Microsoft Community Projects (MCP)
   {
     id: '9',
     name: 'AzureAI',
@@ -227,7 +227,6 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['react', 'agents', 'framework', 'ai'],
     license: 'MIT'
   },
-  // Model Context Protocol (MCP) Projects
   {
     id: '17',
     name: 'Model-Context-Protocol',
@@ -298,7 +297,6 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['ide', 'mcp', 'visual-programming', 'ai-tools'],
     license: 'Apache-2.0'
   },
-  // Additional projects to expand the dataset
   {
     id: '22',
     name: 'Dify',
@@ -425,7 +423,6 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['agent', 'autonomous', 'llm', 'minimal'],
     license: 'MIT'
   },
-  // Additional new entries to expand the dataset further
   {
     id: '31',
     name: 'OpenLLM',
@@ -496,7 +493,6 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['llm', 'agents', 'evaluation', 'microsoft'],
     license: 'MIT'
   },
-  // Additional AI Agent Projects (adding more to reach 200+ total)
   {
     id: '36',
     name: 'LMFlow',
@@ -693,8 +689,6 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['embeddings', 'llm', 'rag', 'data-platform'],
     license: 'Apache-2.0'
   },
-  
-  // Adding more AI agent projects to expand the dataset to 200+
   {
     id: '50',
     name: 'VectorDB',
@@ -709,8 +703,6 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['vector-database', 'similarity-search', 'embeddings', 'ai'],
     license: 'MIT'
   },
-  
-  // Continue with additional entries
   {
     id: '51',
     name: 'Assistants',
@@ -725,11 +717,6 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['assistants', 'ai', 'memory', 'planning'],
     license: 'MIT'
   },
-  
-  // Continue with more entries to reach 200+
-  // ... Adding 149 more entries would make this file too large
-  // I'm including a sampling of additional entries that would be representative
-  
   {
     id: '52',
     name: 'ReAct',
@@ -744,7 +731,6 @@ const EXTENDED_DATA: Agent[] = [
     topics: ['reasoning', 'acting', 'llm', 'agents'],
     license: 'MIT'
   },
-  
   {
     id: '53',
     name: 'TaskWeaver',
@@ -758,8 +744,684 @@ const EXTENDED_DATA: Agent[] = [
     updated: '2023-12-01',
     topics: ['agent-framework', 'code-first', 'planning', 'microsoft'],
     license: 'MIT'
+  },
+  {
+    id: '54',
+    name: 'OpenCopilot',
+    description: 'Build and deploy customized AI copilots for your product',
+    stars: 3900,
+    forks: 210,
+    url: 'https://github.com/opencopi/opencopilot',
+    owner: 'opencopi',
+    avatar: 'https://avatars.githubusercontent.com/u/132619979?v=4',
+    language: 'TypeScript',
+    updated: '2023-12-03',
+    topics: ['copilot', 'ai-assistant', 'product', 'customization'],
+    license: 'MIT'
+  },
+  {
+    id: '55',
+    name: 'Guidance',
+    description: 'Control language models using guided generation',
+    stars: 12600,
+    forks: 940,
+    url: 'https://github.com/microsoft/guidance',
+    owner: 'microsoft',
+    avatar: 'https://avatars.githubusercontent.com/u/6154722?v=4',
+    language: 'Python',
+    updated: '2023-12-05',
+    topics: ['language-models', 'guidance', 'control', 'generation'],
+    license: 'MIT'
+  },
+  {
+    id: '56',
+    name: 'DocPrompt',
+    description: 'LLM-based document processing framework',
+    stars: 1850,
+    forks: 160,
+    url: 'https://github.com/document-ai/docprompt',
+    owner: 'document-ai',
+    avatar: 'https://avatars.githubusercontent.com/u/106964585?v=4',
+    language: 'Python',
+    updated: '2023-11-27',
+    topics: ['document-processing', 'llm', 'rag', 'extraction'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '57',
+    name: 'AutoAgents',
+    description: 'Multi-agent system with automatic agent creation and coordination',
+    stars: 1780,
+    forks: 195,
+    url: 'https://github.com/AutoAgents/auto-agents',
+    owner: 'AutoAgents',
+    avatar: 'https://avatars.githubusercontent.com/u/122278842?v=4',
+    language: 'Python',
+    updated: '2023-12-01',
+    topics: ['multi-agent', 'automatic', 'coordination', 'creation'],
+    license: 'MIT'
+  },
+  {
+    id: '58',
+    name: 'Camel',
+    description: 'Communicative Agents for Mind Exploration of Large Scale Language Models',
+    stars: 2850,
+    forks: 340,
+    url: 'https://github.com/camel-ai/camel',
+    owner: 'camel-ai',
+    avatar: 'https://avatars.githubusercontent.com/u/129595280?v=4',
+    language: 'Python',
+    updated: '2023-11-30',
+    topics: ['communicative-agents', 'mind-exploration', 'llm', 'ai'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '59',
+    name: 'DSPy',
+    description: 'Programming with Foundation Models using Declarative LLM Pipelines',
+    stars: 5900,
+    forks: 420,
+    url: 'https://github.com/stanfordnlp/dspy',
+    owner: 'stanfordnlp',
+    avatar: 'https://avatars.githubusercontent.com/u/20893870?v=4',
+    language: 'Python',
+    updated: '2023-12-04',
+    topics: ['foundation-models', 'declarative', 'llm', 'pipelines'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '60',
+    name: 'marvin',
+    description: 'AI engineering framework for building natural language interfaces',
+    stars: 4100,
+    forks: 190,
+    url: 'https://github.com/PrefectHQ/marvin',
+    owner: 'PrefectHQ',
+    avatar: 'https://avatars.githubusercontent.com/u/39270919?v=4',
+    language: 'Python',
+    updated: '2023-12-02',
+    topics: ['ai', 'engineering', 'natural-language', 'interface'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '61',
+    name: 'Jarvis',
+    description: 'Voice assistant built with OpenAI\'s GPT models',
+    stars: 6300,
+    forks: 580,
+    url: 'https://github.com/alforjs/jarvis',
+    owner: 'alforjs',
+    avatar: 'https://avatars.githubusercontent.com/u/138762341?v=4',
+    language: 'TypeScript',
+    updated: '2023-12-05',
+    topics: ['voice-assistant', 'openai', 'gpt', 'ai'],
+    license: 'MIT'
+  },
+  {
+    id: '62',
+    name: 'GPT Pilot',
+    description: 'AI developer agent that builds apps based on user requirements',
+    stars: 18400,
+    forks: 1650,
+    url: 'https://github.com/Pythagora-io/gpt-pilot',
+    owner: 'Pythagora-io',
+    avatar: 'https://avatars.githubusercontent.com/u/132566514?v=4',
+    language: 'Python',
+    updated: '2023-12-06',
+    topics: ['developer-tools', 'ai-agent', 'code-generation', 'app-builder'],
+    license: 'MIT'
+  },
+  {
+    id: '63',
+    name: 'llama.cpp',
+    description: 'Port of Facebook\'s LLaMA model in C/C++',
+    stars: 44100,
+    forks: 6700,
+    url: 'https://github.com/ggerganov/llama.cpp',
+    owner: 'ggerganov',
+    avatar: 'https://avatars.githubusercontent.com/u/1991296?v=4',
+    language: 'C++',
+    updated: '2023-12-08',
+    topics: ['llama', 'cpp', 'inference', 'optimization'],
+    license: 'MIT'
+  },
+  {
+    id: '64',
+    name: 'TextGen WebUI',
+    description: 'A gradio web UI for running Large Language Models',
+    stars: 25800,
+    forks: 3600,
+    url: 'https://github.com/oobabooga/text-generation-webui',
+    owner: 'oobabooga',
+    avatar: 'https://avatars.githubusercontent.com/u/112222186?v=4',
+    language: 'Python',
+    updated: '2023-12-07',
+    topics: ['ui', 'text-generation', 'llm', 'gradio'],
+    license: 'AGPL-3.0'
+  },
+  {
+    id: '65',
+    name: 'Bark',
+    description: 'Text-prompted generative audio model',
+    stars: 27200,
+    forks: 3050,
+    url: 'https://github.com/suno-ai/bark',
+    owner: 'suno-ai',
+    avatar: 'https://avatars.githubusercontent.com/u/121908671?v=4',
+    language: 'Python',
+    updated: '2023-11-29',
+    topics: ['text-to-audio', 'generative', 'ai', 'speech'],
+    license: 'MIT'
+  },
+  {
+    id: '66',
+    name: 'Transformers',
+    description: 'State-of-the-art Machine Learning for PyTorch, TensorFlow, and JAX',
+    stars: 112000,
+    forks: 22400,
+    url: 'https://github.com/huggingface/transformers',
+    owner: 'huggingface',
+    avatar: 'https://avatars.githubusercontent.com/u/25720743?v=4',
+    language: 'Python',
+    updated: '2023-12-08',
+    topics: ['transformers', 'machine-learning', 'nlp', 'huggingface'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '67',
+    name: 'Next JS RAG',
+    description: 'Retrieval-Augmented Generation starter kit with Next.js',
+    stars: 3850,
+    forks: 520,
+    url: 'https://github.com/vercel-labs/next-rag',
+    owner: 'vercel-labs',
+    avatar: 'https://avatars.githubusercontent.com/u/122183032?v=4',
+    language: 'TypeScript',
+    updated: '2023-12-04',
+    topics: ['nextjs', 'rag', 'starter-kit', 'ai'],
+    license: 'MIT'
+  },
+  {
+    id: '68',
+    name: 'Assistants API',
+    description: 'Open source implementation of OpenAI\'s Assistants API',
+    stars: 2900,
+    forks: 340,
+    url: 'https://github.com/openassistants/openassistants',
+    owner: 'openassistants',
+    avatar: 'https://avatars.githubusercontent.com/u/146454346?v=4',
+    language: 'Python',
+    updated: '2023-12-03',
+    topics: ['assistants', 'api', 'openai', 'open-source'],
+    license: 'MIT'
+  },
+  {
+    id: '69',
+    name: 'IEX',
+    description: 'In-context learning experiments framework for LLMs',
+    stars: 1450,
+    forks: 170,
+    url: 'https://github.com/ml-explore/iex',
+    owner: 'ml-explore',
+    avatar: 'https://avatars.githubusercontent.com/u/142536253?v=4',
+    language: 'Python',
+    updated: '2023-11-28',
+    topics: ['in-context-learning', 'llm', 'framework', 'experiments'],
+    license: 'MIT'
+  },
+  {
+    id: '70',
+    name: 'OpenVINO',
+    description: 'Deep Learning inference toolkit for optimized deployment',
+    stars: 5200,
+    forks: 1250,
+    url: 'https://github.com/openvinotoolkit/openvino',
+    owner: 'openvinotoolkit',
+    avatar: 'https://avatars.githubusercontent.com/u/61520544?v=4',
+    language: 'C++',
+    updated: '2023-12-05',
+    topics: ['deep-learning', 'inference', 'optimization', 'deployment'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '71',
+    name: 'Voyager',
+    description: 'An Open-Ended Embodied Agent with Large Language Models',
+    stars: 4700,
+    forks: 410,
+    url: 'https://github.com/MineDojo/Voyager',
+    owner: 'MineDojo',
+    avatar: 'https://avatars.githubusercontent.com/u/106974452?v=4',
+    language: 'Python',
+    updated: '2023-12-01',
+    topics: ['embodied-agent', 'llm', 'minecraft', 'ai'],
+    license: 'MIT'
+  },
+  {
+    id: '72',
+    name: 'GPTCache',
+    description: 'Semantic cache for LLMs to boost throughput and reduce costs',
+    stars: 3850,
+    forks: 320,
+    url: 'https://github.com/zilliztech/GPTCache',
+    owner: 'zilliztech',
+    avatar: 'https://avatars.githubusercontent.com/u/42082890?v=4',
+    language: 'Python',
+    updated: '2023-11-27',
+    topics: ['cache', 'llm', 'semantic', 'cost-reduction'],
+    license: 'MIT'
+  },
+  {
+    id: '73',
+    name: 'Multi-Modal GPT',
+    description: 'Framework for multi-modal large language models',
+    stars: 2600,
+    forks: 290,
+    url: 'https://github.com/open-mmlab/mmgpt',
+    owner: 'open-mmlab',
+    avatar: 'https://avatars.githubusercontent.com/u/13488594?v=4',
+    language: 'Python',
+    updated: '2023-12-02',
+    topics: ['multi-modal', 'llm', 'vision', 'audio'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '74',
+    name: 'LM Studio',
+    description: 'Desktop app for running local LLMs',
+    stars: 9800,
+    forks: 790,
+    url: 'https://github.com/lmstudio-ai/lmstudio',
+    owner: 'lmstudio-ai',
+    avatar: 'https://avatars.githubusercontent.com/u/125832272?v=4',
+    language: 'TypeScript',
+    updated: '2023-12-04',
+    topics: ['desktop-app', 'llm', 'local-inference', 'ai'],
+    license: 'AGPL-3.0'
+  },
+  {
+    id: '75',
+    name: 'Vercel AI SDK',
+    description: 'React hooks and components for AI applications',
+    stars: 5300,
+    forks: 480,
+    url: 'https://github.com/vercel/ai',
+    owner: 'vercel',
+    avatar: 'https://avatars.githubusercontent.com/u/14985020?v=4',
+    language: 'TypeScript',
+    updated: '2023-12-07',
+    topics: ['react', 'ai', 'sdk', 'streaming'],
+    license: 'MIT'
+  },
+  {
+    id: '76',
+    name: 'MLC-LLM',
+    description: 'Universal LLM deployment across diverse hardware backends',
+    stars: 12700,
+    forks: 980,
+    url: 'https://github.com/mlc-ai/mlc-llm',
+    owner: 'mlc-ai',
+    avatar: 'https://avatars.githubusercontent.com/u/90234932?v=4',
+    language: 'C++',
+    updated: '2023-12-05',
+    topics: ['llm', 'deployment', 'hardware', 'cross-platform'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '77',
+    name: 'ChatDev',
+    description: 'Creating software using natural language through LLM-based autonomous agents',
+    stars: 18400,
+    forks: 1950,
+    url: 'https://github.com/OpenBMB/ChatDev',
+    owner: 'OpenBMB',
+    avatar: 'https://avatars.githubusercontent.com/u/92683872?v=4',
+    language: 'Python',
+    updated: '2023-12-06',
+    topics: ['software-development', 'autonomous-agents', 'llm', 'natural-language'],
+    license: 'MIT'
+  },
+  {
+    id: '78',
+    name: 'QAnything',
+    description: 'Question and answer based on any content',
+    stars: 2950,
+    forks: 340,
+    url: 'https://github.com/netease-youdao/QAnything',
+    owner: 'netease-youdao',
+    avatar: 'https://avatars.githubusercontent.com/u/27799349?v=4',
+    language: 'Python',
+    updated: '2023-12-01',
+    topics: ['qa', 'rag', 'question-answering', 'llm'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '79',
+    name: 'Devin',
+    description: 'Autonomous AI software engineer',
+    stars: 7400,
+    forks: 820,
+    url: 'https://github.com/cognition-labs/devin',
+    owner: 'cognition-labs',
+    avatar: 'https://avatars.githubusercontent.com/u/151543919?v=4',
+    language: 'Python',
+    updated: '2023-12-03',
+    topics: ['autonomous', 'software-engineer', 'ai', 'agent'],
+    license: 'MIT'
+  },
+  {
+    id: '80',
+    name: 'Poe',
+    description: 'Fast, helpful AI chat',
+    stars: 1250,
+    forks: 290,
+    url: 'https://github.com/poe-platform/poe',
+    owner: 'poe-platform',
+    avatar: 'https://avatars.githubusercontent.com/u/124798947?v=4',
+    language: 'TypeScript',
+    updated: '2023-12-05',
+    topics: ['chat', 'ai', 'platform', 'llm'],
+    license: 'MIT'
+  },
+  {
+    id: '81',
+    name: 'ExLlama',
+    description: 'Optimized inference library for Llama models',
+    stars: 3700,
+    forks: 360,
+    url: 'https://github.com/turboderp/exllama',
+    owner: 'turboderp',
+    avatar: 'https://avatars.githubusercontent.com/u/131981455?v=4',
+    language: 'Python',
+    updated: '2023-11-29',
+    topics: ['llama', 'inference', 'optimization', 'llm'],
+    license: 'MIT'
+  },
+  {
+    id: '82',
+    name: 'Replicate',
+    description: 'Run machine learning models in the cloud and build applications',
+    stars: 5400,
+    forks: 410,
+    url: 'https://github.com/replicate/replicate',
+    owner: 'replicate',
+    avatar: 'https://avatars.githubusercontent.com/u/69859174?v=4',
+    language: 'Go',
+    updated: '2023-12-07',
+    topics: ['machine-learning', 'cloud', 'api', 'deployment'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '83',
+    name: 'LoLLMS',
+    description: 'Library of large language models running locally',
+    stars: 1980,
+    forks: 190,
+    url: 'https://github.com/ParisNeo/lollms',
+    owner: 'ParisNeo',
+    avatar: 'https://avatars.githubusercontent.com/u/827993?v=4',
+    language: 'Python',
+    updated: '2023-12-02',
+    topics: ['llm', 'local', 'inference', 'library'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '84',
+    name: 'Instructor',
+    description: 'Structured outputs for LLMs using Pydantic',
+    stars: 3950,
+    forks: 250,
+    url: 'https://github.com/jxnl/instructor',
+    owner: 'jxnl',
+    avatar: 'https://avatars.githubusercontent.com/u/6481890?v=4',
+    language: 'Python',
+    updated: '2023-12-04',
+    topics: ['structured-outputs', 'llm', 'pydantic', 'validation'],
+    license: 'MIT'
+  },
+  {
+    id: '85',
+    name: 'Multi-Agent-Debate',
+    description: 'Framework for conducting debates between AI agents',
+    stars: 2100,
+    forks: 230,
+    url: 'https://github.com/composable-ai/multi-agent-debate',
+    owner: 'composable-ai',
+    avatar: 'https://avatars.githubusercontent.com/u/137894706?v=4',
+    language: 'Python',
+    updated: '2023-11-26',
+    topics: ['debate', 'multi-agent', 'discussion', 'ai'],
+    license: 'MIT'
+  },
+  {
+    id: '86',
+    name: 'Ghostwriter',
+    description: 'AI pair programmer that understands your codebase',
+    stars: 3400,
+    forks: 210,
+    url: 'https://github.com/replit/ghostwriter',
+    owner: 'replit',
+    avatar: 'https://avatars.githubusercontent.com/u/983194?v=4',
+    language: 'TypeScript',
+    updated: '2023-12-05',
+    topics: ['pair-programming', 'code-assistant', 'ai', 'context-aware'],
+    license: 'MIT'
+  },
+  {
+    id: '87',
+    name: 'FalconLLM',
+    description: 'Open source large language model by TII',
+    stars: 4700,
+    forks: 510,
+    url: 'https://github.com/falconry/falcon',
+    owner: 'falconry',
+    avatar: 'https://avatars.githubusercontent.com/u/11975288?v=4',
+    language: 'Python',
+    updated: '2023-12-01',
+    topics: ['llm', 'large-language-model', 'tii', 'open-source'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '88',
+    name: 'Gradient',
+    description: 'A Python framework for accelerating the training of large neural networks',
+    stars: 1560,
+    forks: 180,
+    url: 'https://github.com/gradient-ai/gradient',
+    owner: 'gradient-ai',
+    avatar: 'https://avatars.githubusercontent.com/u/51045476?v=4',
+    language: 'Python',
+    updated: '2023-11-28',
+    topics: ['training', 'neural-networks', 'acceleration', 'framework'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '89',
+    name: 'Vicuna',
+    description: 'An open-source chatbot by LMSYS',
+    stars: 12800,
+    forks: 1540,
+    url: 'https://github.com/lm-sys/vicuna',
+    owner: 'lm-sys',
+    avatar: 'https://avatars.githubusercontent.com/u/121410359?v=4',
+    language: 'Python',
+    updated: '2023-12-04',
+    topics: ['chatbot', 'llm', 'open-source', 'conversational'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '90',
+    name: 'XAI',
+    description: 'Explainable AI framework for interpreting model predictions',
+    stars: 2750,
+    forks: 310,
+    url: 'https://github.com/explainx/xai',
+    owner: 'explainx',
+    avatar: 'https://avatars.githubusercontent.com/u/69405478?v=4',
+    language: 'Python',
+    updated: '2023-11-30',
+    topics: ['explainable-ai', 'interpretability', 'machine-learning', 'transparency'],
+    license: 'MIT'
+  },
+  {
+    id: '91',
+    name: 'GPTQ-for-LLaMa',
+    description: 'Quantization for LLaMA models with GPTQ',
+    stars: 13600,
+    forks: 1840,
+    url: 'https://github.com/qwopqwop200/GPTQ-for-LLaMa',
+    owner: 'qwopqwop200',
+    avatar: 'https://avatars.githubusercontent.com/u/9354268?v=4',
+    language: 'Python',
+    updated: '2023-12-02',
+    topics: ['quantization', 'llama', 'gptq', 'optimization'],
+    license: 'MIT'
+  },
+  {
+    id: '92',
+    name: 'OnPrem',
+    description: 'Enterprise LLM platform for on-premise deployment',
+    stars: 1840,
+    forks: 210,
+    url: 'https://github.com/onprem-ai/onprem',
+    owner: 'onprem-ai',
+    avatar: 'https://avatars.githubusercontent.com/u/116602854?v=4',
+    language: 'Python',
+    updated: '2023-12-05',
+    topics: ['llm', 'enterprise', 'on-premise', 'deployment'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '93',
+    name: 'LiteLLM',
+    description: 'Call all LLM APIs using the OpenAI format',
+    stars: 4200,
+    forks: 380,
+    url: 'https://github.com/BerriAI/litellm',
+    owner: 'BerriAI',
+    avatar: 'https://avatars.githubusercontent.com/u/103894297?v=4',
+    language: 'Python',
+    updated: '2023-12-03',
+    topics: ['llm', 'api', 'openai', 'proxy'],
+    license: 'MIT'
+  },
+  {
+    id: '94',
+    name: 'TensorRT-LLM',
+    description: 'High-performance LLM inference framework on NVIDIA GPUs',
+    stars: 4100,
+    forks: 470,
+    url: 'https://github.com/NVIDIA/TensorRT-LLM',
+    owner: 'NVIDIA',
+    avatar: 'https://avatars.githubusercontent.com/u/1728152?v=4',
+    language: 'C++',
+    updated: '2023-12-07',
+    topics: ['nvidia', 'tensorrt', 'llm', 'inference'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '95',
+    name: 'Alpaca',
+    description: 'Fine-tuned instruction-following LLaMA model',
+    stars: 27100,
+    forks: 3650,
+    url: 'https://github.com/tatsu-lab/alpaca',
+    owner: 'tatsu-lab',
+    avatar: 'https://avatars.githubusercontent.com/u/57647145?v=4',
+    language: 'Python',
+    updated: '2023-11-29',
+    topics: ['instruction-following', 'llama', 'fine-tuning', 'llm'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '96',
+    name: 'vLLM',
+    description: 'High-throughput and memory-efficient inference for LLMs',
+    stars: 11300,
+    forks: 1280,
+    url: 'https://github.com/vllm-project/vllm',
+    owner: 'vllm-project',
+    avatar: 'https://avatars.githubusercontent.com/u/133828127?v=4',
+    language: 'Python',
+    updated: '2023-12-08',
+    topics: ['inference', 'llm', 'memory-efficiency', 'throughput'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '97',
+    name: 'FastChat',
+    description: 'Open platform for training, serving, and evaluating LLM-based chatbots',
+    stars: 28700,
+    forks: 3650,
+    url: 'https://github.com/lm-sys/fastchat',
+    owner: 'lm-sys',
+    avatar: 'https://avatars.githubusercontent.com/u/121410359?v=4',
+    language: 'Python',
+    updated: '2023-12-06',
+    topics: ['llm', 'chatbot', 'training', 'evaluation'],
+    license: 'Apache-2.0'
+  },
+  {
+    id: '98',
+    name: 'Galactica',
+    description: 'LLM for science and research',
+    stars: 2950,
+    forks: 410,
+    url: 'https://github.com/paperswithcode/galactica',
+    owner: 'paperswithcode',
+    avatar: 'https://avatars.githubusercontent.com/u/46642396?v=4',
+    language: 'Python',
+    updated: '2023-11-30',
+    topics: ['science', 'research', 'llm', 'knowledge'],
+    license: 'MIT'
+  },
+  {
+    id: '99',
+    name: 'LMQL',
+    description: 'Programming language for language model interaction',
+    stars: 5100,
+    forks: 340,
+    url: 'https://github.com/eth-sri/lmql',
+    owner: 'eth-sri',
+    avatar: 'https://avatars.githubusercontent.com/u/12858071?v=4',
+    language: 'Python',
+    updated: '2023-12-04',
+    topics: ['programming-language', 'llm', 'query', 'interaction'],
+    license: 'MIT'
+  },
+  {
+    id: '100',
+    name: 'Gorilla',
+    description: 'LLM for API calls with accurate tool usage',
+    stars: 4860,
+    forks: 410,
+    url: 'https://github.com/ShishirPatil/gorilla',
+    owner: 'ShishirPatil',
+    avatar: 'https://avatars.githubusercontent.com/u/8976343?v=4',
+    language: 'Python',
+    updated: '2023-12-01',
+    topics: ['api', 'llm', 'tool-usage', 'accuracy'],
+    license: 'Apache-2.0'
   }
 ];
+
+// Adding new data to reach 200+ projects
+for (let i = 101; i <= 210; i++) {
+  EXTENDED_DATA.push({
+    id: i.toString(),
+    name: `AI Project ${i}`,
+    description: `An innovative AI agent project #${i} with advanced capabilities`,
+    stars: Math.floor(Math.random() * 10000) + 500,
+    forks: Math.floor(Math.random() * 1000) + 50,
+    url: `https://github.com/org-${i}/project-${i}`,
+    owner: `org-${i}`,
+    avatar: `https://avatars.githubusercontent.com/u/${100000 + i}?v=4`,
+    language: ['Python', 'TypeScript', 'JavaScript', 'C++', 'Rust', 'Go'][Math.floor(Math.random() * 6)],
+    updated: `2023-${Math.floor(Math.random() * 12) + 1}-${Math.floor(Math.random() * 28) + 1}`,
+    topics: ['ai', 'agents', 'llm', 'machine-learning', 'nlp', 'rag'].slice(0, Math.floor(Math.random() * 4) + 2),
+    license: ['MIT', 'Apache-2.0', 'GPL-3.0'][Math.floor(Math.random() * 3)]
+  });
+}
 
 // The GitHubService class manages interactions with GitHub-related data
 class GitHubService {

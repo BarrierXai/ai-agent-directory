@@ -1,10 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import DirectoryGrid from '../components/DirectoryGrid';
 import { GitHubService } from '../services/GitHubService';
 import { toast } from '@/components/ui/use-toast';
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,17 +14,6 @@ import { Layers, Heart } from 'lucide-react';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [showAddProjectDialog, setShowAddProjectDialog] = useState(false);
-  const [newProject, setNewProject] = useState<Partial<Agent>>({
-    name: '',
-    description: '',
-    url: '',
-    owner: '',
-    language: '',
-    license: '',
-    topics: []
-  });
-  
   const [featuredProjects, setFeaturedProjects] = useState<Agent[]>([]);
   const [showContactSection, setShowContactSection] = useState(false);
 
@@ -68,33 +57,6 @@ const Index = () => {
         contactSection.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
-  };
-  
-  const handleSubmitProject = () => {
-    if (!newProject.name || !newProject.url || !newProject.description) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    toast({
-      title: "Project Submitted",
-      description: "Your project has been submitted for review and will be added to the directory soon.",
-    });
-    
-    setShowAddProjectDialog(false);
-    setNewProject({
-      name: '',
-      description: '',
-      url: '',
-      owner: '',
-      language: '',
-      license: '',
-      topics: []
-    });
   };
 
   return (
@@ -145,20 +107,6 @@ const Index = () => {
                 </div>
               ))}
             </div>
-            
-            <div className="mt-8 text-center">
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  const directorySection = document.getElementById('directory');
-                  if (directorySection) {
-                    directorySection.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-              >
-                Browse All Projects
-              </Button>
-            </div>
           </div>
         </section>
         
@@ -197,11 +145,10 @@ const Index = () => {
                 contribute to, and build upon the collective knowledge of the community.
               </p>
               
-              <h3 className="text-lg font-semibold mb-3">Get Involved</h3>
+              <h3 className="text-lg font-semibold mb-3">Contact Us</h3>
               <p className="text-gray-700">
-                This directory is a community effort. If you've created or know of an open-source AI agent 
-                project that should be included, please use the "Add Project" button to submit it. 
-                Together, we can build the most valuable resource for AI agent technology.
+                Have questions or want to share information about an AI agent project? 
+                Email us at <a href="mailto:kasem@ie-14.com" className="text-blue-600 hover:underline">kasem@ie-14.com</a>.
               </p>
             </div>
           </div>
@@ -310,109 +257,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-      
-      <Dialog open={showAddProjectDialog} onOpenChange={setShowAddProjectDialog}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Add Open Source Project</DialogTitle>
-            <DialogDescription>
-              Submit your open source AI agent or MCP project to be featured in our directory.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="project-name" className="text-right">Name</Label>
-              <Input 
-                id="project-name" 
-                value={newProject.name} 
-                onChange={(e) => setNewProject({...newProject, name: e.target.value})}
-                className="col-span-3" 
-                placeholder="Project name"
-              />
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="project-url" className="text-right">GitHub URL</Label>
-              <Input 
-                id="project-url" 
-                value={newProject.url} 
-                onChange={(e) => setNewProject({...newProject, url: e.target.value})}
-                className="col-span-3" 
-                placeholder="https://github.com/username/project"
-              />
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="project-desc" className="text-right">Description</Label>
-              <Textarea 
-                id="project-desc" 
-                value={newProject.description} 
-                onChange={(e) => setNewProject({...newProject, description: e.target.value})}
-                className="col-span-3" 
-                placeholder="Short description of your project"
-                rows={3}
-              />
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="project-owner" className="text-right">Owner/Organization</Label>
-              <Input 
-                id="project-owner" 
-                value={newProject.owner} 
-                onChange={(e) => setNewProject({...newProject, owner: e.target.value})}
-                className="col-span-3" 
-                placeholder="GitHub username or organization"
-              />
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="project-lang" className="text-right">Primary Language</Label>
-              <Input 
-                id="project-lang" 
-                value={newProject.language} 
-                onChange={(e) => setNewProject({...newProject, language: e.target.value})}
-                className="col-span-3" 
-                placeholder="e.g., Python, JavaScript, etc."
-              />
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="project-license" className="text-right">License</Label>
-              <Input 
-                id="project-license" 
-                value={newProject.license} 
-                onChange={(e) => setNewProject({...newProject, license: e.target.value})}
-                className="col-span-3" 
-                placeholder="e.g., MIT, Apache-2.0, etc."
-              />
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="project-topics" className="text-right">Topics</Label>
-              <Input 
-                id="project-topics" 
-                value={newProject.topics ? newProject.topics.join(', ') : ''}
-                onChange={(e) => setNewProject({
-                  ...newProject, 
-                  topics: e.target.value.split(',').map(topic => topic.trim())
-                })}
-                className="col-span-3" 
-                placeholder="ai, agents, mcp, etc. (comma separated)"
-              />
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setShowAddProjectDialog(false)}>
-              Cancel
-            </Button>
-            <Button type="button" onClick={handleSubmitProject}>
-              Submit Project
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
