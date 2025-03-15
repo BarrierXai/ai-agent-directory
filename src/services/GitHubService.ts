@@ -184,11 +184,34 @@ class GitHubService {
     });
   }
 
-  static refreshAgentData(): Promise<Agent[]> {
+  static getLastUpdatedTimestamp(): string {
+    return localStorage.getItem('lastAgentRefresh') || new Date().toISOString();
+  }
+
+  static formatLastUpdated(timestamp: string): string {
+    if (!timestamp) return 'Never';
+    
+    const date = new Date(timestamp);
+    
+    // Check if date is valid
+    if (isNaN(date.getTime())) return 'Unknown';
+    
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  static refreshAgentData(): Promise<{timestamp: string, agents: Agent[]}> {
     return new Promise((resolve) => {
       setTimeout(() => {
         const refreshedAgents = [...EXTENDED_DATA];
-        resolve(refreshedAgents);
+        const timestamp = new Date().toISOString();
+        localStorage.setItem('lastAgentRefresh', timestamp);
+        resolve({ timestamp, agents: refreshedAgents });
       }, 1000);
     });
   }

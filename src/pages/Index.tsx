@@ -1,10 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import DirectoryGrid from '../components/DirectoryGrid';
 import { GitHubService } from '../services/GitHubService';
-import { toast } from '@/components/ui/use-toast';
 import { Agent } from '@/types';
 import { Layers, Heart } from 'lucide-react';
 
@@ -40,7 +38,7 @@ const Index = () => {
     const now = new Date();
     
     if (!lastRefresh || (now.getTime() - new Date(lastRefresh).getTime() > 24 * 60 * 60 * 1000)) {
-      GitHubService.refreshAgentData().then((refreshedAgents) => {
+      GitHubService.refreshAgentData().then((refreshedData) => {
         localStorage.setItem('lastAgentRefresh', now.toISOString());
       });
     }

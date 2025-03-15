@@ -6,7 +6,7 @@ import { GitHubService } from '../services/GitHubService';
 
 interface HeroProps {
   onSearch: (query: string) => void;
-  onAddProject: () => void;
+  onAddProject?: () => void; // Made optional
 }
 
 const Hero = ({ onSearch, onAddProject }: HeroProps) => {
@@ -21,8 +21,8 @@ const Hero = ({ onSearch, onAddProject }: HeroProps) => {
   }, []);
 
   const handleRefresh = async () => {
-    const { timestamp } = await GitHubService.refreshAgentData();
-    setLastUpdated(timestamp);
+    const result = await GitHubService.refreshAgentData();
+    setLastUpdated(result.timestamp);
   };
 
   return (
@@ -58,7 +58,6 @@ const Hero = ({ onSearch, onAddProject }: HeroProps) => {
           <SearchBar 
             defaultValue="" 
             onSearch={onSearch} 
-            onAddProject={onAddProject}
             lastUpdated={GitHubService.formatLastUpdated(lastUpdated)}
             isCompact={true}
           />
