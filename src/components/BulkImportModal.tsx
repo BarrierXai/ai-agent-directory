@@ -12,6 +12,22 @@ interface BulkImportModalProps {
   onProjectsAdded?: (agents: Agent[]) => void;
 }
 
+interface GitHubSearchResponse {
+  items: Array<{
+    html_url: string;
+    name: string;
+    description: string;
+    stargazers_count: number;
+  }>;
+}
+
+// Type declarations for 'process'
+declare const process: {
+  env: {
+    NEXT_PUBLIC_GITHUB_TOKEN?: string;
+  }
+};
+
 const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,74 +38,48 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
   const [showSatisfactionQuery, setShowSatisfactionQuery] = useState(false);
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualUrl, setManualUrl] = useState('');
+  const [customSearchTerms, setCustomSearchTerms] = useState('');
 
   const searchGithub = async (term: string): Promise<string[]> => {
+    // Using GitHub's API key if available, otherwise fallback to a rate-limited approach
     try {
-      // Add a random delay between 1-3 seconds to avoid being blocked
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-      
-      const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(term)}+site:github.com`;
-      const response = await fetch(searchUrl, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.5',
-          'DNT': '1',
-          'Connection': 'keep-alive',
-          'Upgrade-Insecure-Requests': '1',
-          'Sec-Fetch-Dest': 'document',
-          'Sec-Fetch-Mode': 'navigate',
-          'Sec-Fetch-Site': 'none',
-          'Sec-Fetch-User': '?1',
-          'Cache-Control': 'max-age=0'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Search request failed with status: ${response.status}`);
-      }
-
-      const html = await response.text();
-
-      // More comprehensive regex pattern for GitHub repository URLs
-      const urlRegex = /https?:\/\/(?:www\.)?github\.com\/[a-zA-Z0-9-]+\/[a-zA-Z0-9-._]+(?:\/)?(?!\S)/g;
-      const matches = html.match(urlRegex) || [];
-
-      // Clean and validate URLs
-      const repoUrls = matches
-        .map(url => {
-          try {
-            // Remove trailing slashes and fragments
-            const cleanUrl = url.replace(/\/$/, '').split('#')[0];
-            const parsedUrl = new URL(cleanUrl);
-            
-            // Ensure it's a valid GitHub repository URL
-            if (parsedUrl.hostname === 'github.com' && 
-                parsedUrl.pathname.split('/').filter(Boolean).length >= 2 && 
-                !cleanUrl.includes('/issues/') && 
-                !cleanUrl.includes('/pull/') &&
-                !cleanUrl.includes('/wiki/') &&
-                !cleanUrl.includes('/releases/') &&
-                !cleanUrl.includes('/actions/') &&
-                !cleanUrl.includes('/projects/') &&
-                !cleanUrl.includes('/settings/')) {
-              return cleanUrl;
+      // First attempt GitHub API if token is available
+      if (process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
+        try {
+          const response = await fetch(
+            `https://api.github.com/search/repositories?q=${encodeURIComponent(term)}&sort=stars&order=desc`,
+            {
+              headers: {
+                Accept: 'application/vnd.github.v3+json',
+                Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`
+              }
             }
-            return null;
-          } catch {
-            return null;
-          }
-        })
-        .filter((url): url is string => url !== null);
+          );
 
-      return [...new Set(repoUrls)];
+          if (!response.ok) throw new Error(`GitHub API error: ${response.status}`);
+
+          const data = await response.json() as GitHubSearchResponse;
+          return data.items.map(item => item.html_url);
+        } catch (error) {
+          console.error('GitHub API search failed:', error);
+          throw new Error('Failed to search GitHub. Please check your API token and network connection.');
+        }
+      } else {
+        // Fallback to simpler search if no token
+        throw new Error('GitHub token is required. Please add your token to .env.local file.');
+      }
     } catch (error) {
       console.error('Error searching GitHub repositories:', error);
+      toast({
+        title: 'Search Error',
+        description: error instanceof Error ? error.message : 'Unknown error occurred',
+        variant: 'destructive',
+      });
       throw error;
     }
   };
 
-  const simulateGoogleSearch = async (searchTerms: string[]) => {
+  const simulateGoogleSearch = async (searchTerms: string[], customQueries?: string[]) => {
     setIsLoading(true);
     setProgress(0);
     setImportedProjects([]);
@@ -98,7 +88,8 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
 
     try {
       let allRepoUrls: string[] = [];
-      const searchQueries = [
+      // Use custom queries if provided, otherwise use default
+      const searchQueries = customQueries || [
         'AI Agent GitHub repository',
         'GitHub MCP framework',
         'autonomous AI agent GitHub',
@@ -119,13 +110,12 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
         try {
           const repoUrls = await searchGithub(term);
           allRepoUrls = [...allRepoUrls, ...repoUrls];
-          allRepoUrls = [...new Set(allRepoUrls)];
+          allRepoUrls = [...new Set(allRepoUrls)]; // Remove duplicates
           successfulSearches++;
         } catch (error) {
           console.error(`Error searching for "${term}":`, error);
           failedSearches++;
           
-          // Show warning toast but continue with other queries
           toast({
             title: 'Search Warning',
             description: `Failed to search for "${term}". Continuing with remaining terms.`,
@@ -138,14 +128,14 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
           }
         }
 
-        // Add a delay between searches
+        // Add a delay between searches to avoid rate limiting
         if (i < searchQueries.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
 
       if (successfulSearches === 0) {
-        throw new Error('All searches failed. Please try again later.');
+        throw new Error('All searches failed. Please check your GitHub token and try again later.');
       }
 
       setTotalFound(allRepoUrls.length);
@@ -214,9 +204,14 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
   };
 
   const handleBulkImport = async () => {
-    setIsLoading(true);
-    setStatus('Searching GitHub...');
-    simulateGoogleSearch([]);
+    if (isLoading) return;
+    
+    // Parse custom search terms if provided
+    const searchTerms = customSearchTerms.trim() 
+      ? customSearchTerms.split('\n').filter(term => term.trim().length > 0)
+      : undefined;
+      
+    await simulateGoogleSearch([], searchTerms);
   };
 
   const resetState = () => {
@@ -234,134 +229,172 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
     setIsOpen(open);
   };
 
+  const handleManualImport = async () => {
+    if (!manualUrl.trim()) {
+      toast({
+        title: 'Empty URL',
+        description: 'Please enter a GitHub repository URL',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    setStatus('Processing manual URL...');
+    
+    try {
+      const result = await GitHubService.addProjectFromGitHub(manualUrl);
+      if (result.success && result.agent) {
+        setImportedProjects([result.agent]);
+        
+        if (onProjectsAdded) {
+          onProjectsAdded([result.agent]);
+        }
+        
+        toast({
+          title: 'Import Successful',
+          description: `Successfully imported: ${result.agent.name}`,
+        });
+      } else {
+        toast({
+          title: 'Import Failed',
+          description: result.error || 'Failed to import repository',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error importing repository:', error);
+      toast({
+        title: 'Import Error',
+        description: error instanceof Error ? error.message : 'Unknown error occurred during import',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={handleModalClose}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
-          <Search className="w-4 h-4" />
-          Add in Bulk
+        <Button variant="outline">
+          <Search className="mr-2 h-4 w-4" />
+          Bulk Import
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Bulk Import AI Agent Projects</DialogTitle>
+          <DialogTitle>Import AI Agent GitHub Repositories</DialogTitle>
           <DialogDescription>
-            {!showManualInput ? 
-              "Search and import AI agent and MCP projects automatically. This will search for repositories containing terms like \"AI Agent\", \"MCP\", etc." :
-              "Enter the GitHub URL of an AI agent or MCP project to add it directly."
-            }
+            Automatically search and import AI agent repositories from GitHub.
           </DialogDescription>
         </DialogHeader>
-        
-        <div className="py-4">
-          {isLoading ? (
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>{status}</span>
-                  <span>{progress}%</span>
-                </div>
-                <Progress value={progress} className="h-2" />
-              </div>
-              
-              {importedProjects.length > 0 && (
-                <div className="mt-4">
-                  <h4 className="text-sm font-medium mb-2">Imported Projects ({importedProjects.length})</h4>
-                  <div className="max-h-[200px] overflow-y-auto border rounded-md p-2 bg-gray-50">
-                    <ul className="space-y-1">
-                      {importedProjects.map((project, index) => (
-                        <li key={index} className="text-sm py-1 border-b last:border-0 flex items-center gap-2">
-                          <span className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center text-green-600">✓</span>
-                          {project.name} <span className="text-xs text-gray-500">({project.owner})</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
+
+        {!isLoading && importedProjects.length === 0 && (
+          <div className="space-y-4 py-4">
+            <div>
+              <h4 className="text-sm font-medium mb-2">Search Terms (one per line)</h4>
+              <textarea
+                className="w-full h-32 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter custom search terms (e.g. 'AI agent framework GitHub')
+Each line will be used as a separate search query."
+                value={customSearchTerms}
+                onChange={(e) => setCustomSearchTerms(e.target.value)}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Leave blank to use default search terms. Adding specific terms will improve results.
+              </p>
             </div>
-          ) : showSatisfactionQuery ? (
-            <div className="space-y-4">
-              <p className="text-sm">Are you satisfied with the import results?</p>
-              <div className="flex gap-3">
-                <Button 
-                  variant="default" 
-                  onClick={() => {
-                    setIsOpen(false);
-                    resetState();
-                  }}
-                >
-                  Yes, I'm satisfied
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowManualInput(true)}
-                >
-                  No, add manually
-                </Button>
-              </div>
-            </div>
-          ) : showManualInput ? (
-            <div className="space-y-4">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="manualUrl" className="text-sm font-medium">
-                  GitHub Repository URL
-                </label>
-                <div className="flex gap-2">
-                  <Input
-                    id="manualUrl"
-                    placeholder="https://github.com/username/repository"
-                    value={manualUrl}
-                    onChange={e => setManualUrl(e.target.value)}
-                    className="flex-1"
-                  />
-                  <Button 
-                    onClick={handleManualImport}
-                    disabled={isLoading || !manualUrl.trim()}
-                  >
-                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Link className="mr-2 h-4 w-4" />}
-                    Add
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2 p-2 bg-blue-50 text-blue-700 rounded">
-                <AlertCircle className="h-4 w-4" />
-                <p className="text-xs">
-                  Enter the GitHub URL of an AI agent project you want to add. The repository should include terms like "AI agent" or "MCP" in its description.
-                </p>
-              </div>
-              
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => {
-                  setShowManualInput(false);
-                  setShowSatisfactionQuery(false);
-                }}
-              >
-                Go back to bulk import
+            
+            <div className="flex items-center justify-between">
+              <Button variant="outline" onClick={() => setShowManualInput(!showManualInput)}>
+                {showManualInput ? 'Hide Manual Import' : 'Manual Import'}
+              </Button>
+              <Button onClick={handleBulkImport}>
+                Start GitHub Search
               </Button>
             </div>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-sm">
-                This will search for AI agent and MCP projects up to the 25th page
-                of search results, looking for repositories that match our criteria.
-              </p>
-              <p className="text-sm font-medium">
-                Search will include terms:
-              </p>
-              <ul className="list-disc list-inside text-sm space-y-1 text-gray-600">
-                <li>AI Agent GitHub</li>
-                <li>MCP GitHub</li>
-                <li>Autonomous AI agent GitHub</li>
-                <li>AI assistant repository</li>
-                <li>LLM agent framework</li>
-              </ul>
+
+            {showManualInput && (
+              <div className="mt-4 space-y-2">
+                <Input
+                  placeholder="Enter GitHub Repository URL"
+                  value={manualUrl}
+                  onChange={(e) => setManualUrl(e.target.value)}
+                />
+                <Button onClick={handleManualImport} className="w-full">
+                  Import Repository
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {isLoading ? (
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>{status}</span>
+                <span>{progress}%</span>
+              </div>
+              <Progress value={progress} className="h-2" />
             </div>
-          )}
-        </div>
+            
+            {importedProjects.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-2">Imported Projects ({importedProjects.length})</h4>
+                <div className="max-h-[200px] overflow-y-auto border rounded-md p-2 bg-gray-50">
+                  <ul className="space-y-1">
+                    {importedProjects.map((project, index) => (
+                      <li key={index} className="text-sm py-1 border-b last:border-0 flex items-center gap-2">
+                        <span className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center text-green-600">✓</span>
+                        {project.name} <span className="text-xs text-gray-500">({project.owner})</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : showSatisfactionQuery ? (
+          <div className="space-y-4">
+            <p className="text-sm">Are you satisfied with the import results?</p>
+            <div className="flex gap-3">
+              <Button 
+                variant="default" 
+                onClick={() => {
+                  setIsOpen(false);
+                  resetState();
+                }}
+              >
+                Yes, I'm satisfied
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowManualInput(true)}
+              >
+                No, add manually
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-sm">
+              This will search for AI agent and MCP projects up to the 25th page
+              of search results, looking for repositories that match our criteria.
+            </p>
+            <p className="text-sm font-medium">
+              Search will include terms:
+            </p>
+            <ul className="list-disc list-inside text-sm space-y-1 text-gray-600">
+              <li>AI Agent GitHub</li>
+              <li>MCP GitHub</li>
+              <li>Autonomous AI agent GitHub</li>
+              <li>AI assistant repository</li>
+              <li>LLM agent framework</li>
+            </ul>
+          </div>
+        )}
         
         <DialogFooter>
           {!isLoading && !showSatisfactionQuery && !showManualInput ? (
