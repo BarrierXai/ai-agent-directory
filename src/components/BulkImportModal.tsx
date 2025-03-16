@@ -159,17 +159,49 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
     }
   };
 
-  const handleBulkImport = async () => {
-    const searchTerms = [
-      'AI Agent GitHub',
-      'MCP GitHub',
-      'autonomous AI agent GitHub',
-      'AI assistant GitHub',
-      'LLM agent GitHub'
-    ];
-    
-    await simulateGoogleSearch(searchTerms);
-  };
+const handleBulkImport = async (query: string) => {
+  setIsLoading(true);
+  setStatus('Searching Google...');
+  
+  try {
+    const response = await fetch(`/api/scrape?query=${encodeURIComponent(query)}`);
+    const data = await response.json();
+
+    if (data.results && data.results.length > 0) {
+      setImportedProjects(data.results.map((item: any) => ({
+        name: item.title,
+        url: item.link,
+        owner: new URL(item.link).pathname.split('/')[1],
+      }));
+      setTotalFound(data.results.length);
+      setStatus('Import completed successfully!');
+      
+      if (onProjectsAdded) {
+        onProjectsAdded(data.results);
+      }
+
+      toast({
+        title: 'Import Successful',
+        description: `${data.results.length} repositories imported successfully.`,
+      });
+    } else {
+      toast({
+        title: 'No results',
+        description: 'No repositories found to import.',
+        variant: 'destructive',
+      });
+    }
+  } catch (error) {
+    toast({
+      title: 'Import Failed',
+      description: 'An error occurred while importing. Please retry.',
+      variant: 'destructive',
+    });
+  } finally {
+    setIsLoading(false);
+    setShowSatisfactionQuery(true);
+  }
+};
 
   const handleManualImport = async () => {
     if (!manualUrl.trim()) {
