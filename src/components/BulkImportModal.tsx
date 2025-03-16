@@ -159,30 +159,31 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
     }
   };
 
-const handleBulkImport = async (query: string) => {
+const handleBulkImport = async () => {
   setIsLoading(true);
   setStatus('Searching Google...');
   
   try {
-    const response = await fetch(`/api/scrape?query=${encodeURIComponent(query)}`);
+    const response = await fetch(`/api/scrape?query=AI+Agent+GitHub+MCP+autonomous+AI+assistant+LLM`);
     const data = await response.json();
 
     if (data.results && data.results.length > 0) {
-      setImportedProjects(data.results.map((item: any) => ({
+      const imported = data.results.map((item: any) => ({
         name: item.title,
         url: item.link,
         owner: new URL(item.link).pathname.split('/')[1],
       }));
-      setTotalFound(data.results.length);
+      setImportedProjects(imported);
+      setTotalFound(imported.length);
       setStatus('Import completed successfully!');
-      
+
       if (onProjectsAdded) {
-        onProjectsAdded(data.results);
+        onProjectsAdded(imported);
       }
 
       toast({
         title: 'Import Successful',
-        description: `${data.results.length} repositories imported successfully.`,
+        description: `${imported.length} repositories imported successfully.`,
       });
     } else {
       toast({
@@ -202,56 +203,6 @@ const handleBulkImport = async (query: string) => {
     setShowSatisfactionQuery(true);
   }
 };
-
-  const handleManualImport = async () => {
-    if (!manualUrl.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Please enter a valid GitHub URL',
-        variant: 'destructive',
-      });
-      return;
-    }
-    
-    setIsLoading(true);
-    setProgress(20);
-    setStatus('Processing manual import...');
-    
-    try {
-      const result = await GitHubService.addProjectFromGitHub(manualUrl);
-      setProgress(80);
-      
-      if (result.success && result.agent) {
-        setImportedProjects(prev => [...prev, result.agent]);
-        
-        toast({
-          title: 'Import Successful',
-          description: `Successfully added ${result.agent.name}`,
-        });
-        
-        if (onProjectsAdded) {
-          onProjectsAdded([result.agent]);
-        }
-      } else {
-        toast({
-          title: 'Import Failed',
-          description: result.error || 'Failed to add repository',
-          variant: 'destructive',
-        });
-      }
-    } catch (error) {
-      console.error('Error during manual import:', error);
-      toast({
-        title: 'Import Failed',
-        description: 'An error occurred while adding the repository',
-        variant: 'destructive',
-      });
-    } finally {
-      setProgress(100);
-      setIsLoading(false);
-      setManualUrl('');
-    }
-  };
 
   const resetState = () => {
     setIsLoading(false);
