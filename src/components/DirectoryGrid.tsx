@@ -9,6 +9,7 @@ import PaginationControl from './PaginationControl';
 import { paginateData } from '../utils/pagination';
 import { toast } from '@/components/ui/use-toast';
 import AddProjectForm from './AddProjectForm';
+import BulkImportModal from './BulkImportModal';
 
 interface DirectoryGridProps {
   initialSearchQuery?: string;
@@ -202,6 +203,17 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
       description: `${newAgent.name} has been added to the directory.`,
     });
   };
+  
+  const handleBulkProjectsAdded = (newAgents: Agent[]) => {
+    if (newAgents && newAgents.length > 0) {
+      setAgents(prevAgents => [...newAgents, ...prevAgents]);
+      
+      toast({
+        title: "Success",
+        description: `${newAgents.length} AI agent projects have been added to the directory.`,
+      });
+    }
+  };
 
   return (
     <div ref={directoryRef} className="py-8 px-4 md:px-8 max-w-7xl mx-auto">
@@ -226,6 +238,7 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
                 {filteredAgents.length} {filteredAgents.length === 1 ? 'project' : 'projects'}
               </div>
               <AddProjectForm onProjectAdded={handleProjectAdded} />
+              <BulkImportModal onProjectsAdded={handleBulkProjectsAdded} />
               <Button 
                 variant="outline" 
                 size="sm" 

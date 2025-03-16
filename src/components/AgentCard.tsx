@@ -2,7 +2,7 @@
 import { Agent } from "../types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { StarIcon, GitForkIcon, ClockIcon } from "lucide-react";
+import { StarIcon, GitForkIcon } from "lucide-react";
 import AgentIntegrationButtons from "./AgentIntegrationButtons";
 
 interface AgentCardProps {
@@ -19,8 +19,8 @@ const AgentCard = ({ agent }: AgentCardProps) => {
     owner, 
     avatar, 
     language, 
-    updated, 
     topics, 
+    license,
     isLoading 
   } = agent;
 
@@ -53,12 +53,6 @@ const AgentCard = ({ agent }: AgentCardProps) => {
     }
     return num.toString();
   };
-
-  const formattedDate = new Date(updated).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
 
   return (
     <Card className="h-full flex flex-col transition-all duration-200 hover:shadow-md overflow-hidden border border-gray-200 bg-white">
@@ -124,8 +118,7 @@ const AgentCard = ({ agent }: AgentCardProps) => {
             </span>
           </div>
           <span className="flex items-center gap-1">
-            <ClockIcon className="w-3.5 h-3.5" />
-            {formattedDate}
+            {license || "No License"}
           </span>
         </div>
         
