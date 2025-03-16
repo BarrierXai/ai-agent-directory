@@ -5,8 +5,9 @@ import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import { toast } from './ui/use-toast';
 import { GitHubService } from '../services/GitHubService';
-import { Search, Loader2 } from 'lucide-react';
+import { Search, Loader2, Link, AlertCircle } from 'lucide-react';
 import { Agent } from '../types';
+import { Input } from './ui/input';
 
 interface BulkImportModalProps {
   onProjectsAdded?: (agents: Agent[]) => void;
@@ -19,73 +20,111 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
   const [status, setStatus] = useState('');
   const [importedProjects, setImportedProjects] = useState<Agent[]>([]);
   const [totalFound, setTotalFound] = useState(0);
+  const [showSatisfactionQuery, setShowSatisfactionQuery] = useState(false);
+  const [showManualInput, setShowManualInput] = useState(false);
+  const [manualUrl, setManualUrl] = useState('');
+
+  // Mock search results data based on real GitHub AI agent projects
+  // In a real implementation, this would be fetched from an API
+  const searchGithub = async (term: string): Promise<string[]> => {
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 800));
+    
+    // Return a subset of repository URLs for each search term
+    // These are based on real repositories related to AI agents
+    const realRepoUrls: Record<string, string[]> = {
+      'AI Agent GitHub': [
+        'https://github.com/Significant-Gravitas/Auto-GPT',
+        'https://github.com/yoheinakajima/babyagi',
+        'https://github.com/reworkd/AgentGPT',
+        'https://github.com/joaomdmoura/crewAI'
+      ],
+      'MCP GitHub': [
+        'https://github.com/AgentMCP/mcp-framework',
+        'https://github.com/microsoft/semantic-kernel',
+        'https://github.com/microsoft/TaskWeaver',
+        'https://github.com/milvus-io/pymilvus'
+      ],
+      'autonomous AI agent GitHub': [
+        'https://github.com/TransformerOptimus/SuperAGI',
+        'https://github.com/OpenBMB/XAgent',
+        'https://github.com/Torantulino/Auto-GPT-Plugin-Template',
+        'https://github.com/OpenDevin/OpenDevin'
+      ],
+      'AI assistant GitHub': [
+        'https://github.com/langchain-ai/langchainjs',
+        'https://github.com/deepset-ai/haystack',
+        'https://github.com/geekan/MetaGPT',
+        'https://github.com/imartinez/privateGPT'
+      ],
+      'LLM agent GitHub': [
+        'https://github.com/run-llama/llama_index',
+        'https://github.com/hwchase17/langchain',
+        'https://github.com/mlc-ai/mlc-llm',
+        'https://github.com/ggerganov/llama.cpp'
+      ]
+    };
+    
+    // Return the repositories for the given search term, or a default set if not found
+    return realRepoUrls[term] || [
+      'https://github.com/microsoft/guidance',
+      'https://github.com/chroma-core/chroma',
+      'https://github.com/pola-rs/polars',
+      'https://github.com/lm-sys/FastChat'
+    ];
+  };
 
   const simulateGoogleSearch = async (searchTerms: string[]) => {
     setIsLoading(true);
     setProgress(0);
     setImportedProjects([]);
     setTotalFound(0);
+    setShowSatisfactionQuery(false);
     
     try {
       // Simulate searching Google for each search term
-      let foundProjects: Agent[] = [];
+      let allRepoUrls: string[] = [];
       
       for (let i = 0; i < searchTerms.length; i++) {
         const term = searchTerms[i];
-        setStatus(`Searching Google for "${term}"... (${i + 1}/${searchTerms.length})`);
+        setStatus(`Searching for "${term}"... (${i + 1}/${searchTerms.length})`);
         setProgress(Math.floor((i / searchTerms.length) * 30));
         
-        // Simulate delay for search
-        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 500));
+        // Get repository URLs for this search term
+        const repoUrls = await searchGithub(term);
+        allRepoUrls = [...allRepoUrls, ...repoUrls];
+        
+        // Remove duplicates
+        allRepoUrls = [...new Set(allRepoUrls)];
       }
       
-      // Simulate finding a random number of results (20-100)
-      const totalResults = Math.floor(Math.random() * 80) + 20;
-      setTotalFound(totalResults);
-      setStatus(`Found ${totalResults} potential GitHub repositories. Analyzing...`);
+      setTotalFound(allRepoUrls.length);
+      setStatus(`Found ${allRepoUrls.length} potential GitHub repositories. Analyzing...`);
       setProgress(30);
       
-      // Simulate processing each result
-      const importBatch = async (start: number, end: number, batchProgress: number) => {
-        for (let i = start; i < end; i++) {
-          if (i >= totalResults) break;
-          
-          const currentProgress = 30 + Math.floor(((i - start) / (end - start)) * batchProgress);
-          setProgress(currentProgress);
-          setStatus(`Processing result ${i + 1} of ${totalResults}...`);
-          
-          // Simulate delay for each repository analysis
-          await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 300));
-          
-          // Randomly determine if this "found" repository matches our criteria
-          if (Math.random() > 0.7) {
-            try {
-              // Simulate adding a GitHub repository
-              const url = `https://github.com/example/ai-agent-${Math.floor(Math.random() * 10000)}`;
-              const result = await GitHubService.addProjectFromGitHub(url);
-              
-              if (result.success && result.agent) {
-                foundProjects.push(result.agent);
-                setImportedProjects([...foundProjects]);
-              }
-            } catch (error) {
-              console.error('Error adding repository:', error);
-            }
-          }
-        }
-      };
+      // Process each repository URL
+      let foundProjects: Agent[] = [];
       
-      // Process in batches to simulate pagination
-      const batchSize = 20;
-      const numBatches = Math.ceil(totalResults / batchSize);
-      
-      for (let batch = 0; batch < numBatches; batch++) {
-        setStatus(`Processing batch ${batch + 1} of ${numBatches}...`);
-        const start = batch * batchSize;
-        const end = Math.min(start + batchSize, totalResults);
-        const batchProgress = 60 / numBatches; // 60% of progress dedicated to processing
+      for (let i = 0; i < allRepoUrls.length; i++) {
+        const repoUrl = allRepoUrls[i];
+        const currentProgress = 30 + Math.floor((i / allRepoUrls.length) * 65);
+        setProgress(currentProgress);
+        setStatus(`Processing repository ${i + 1} of ${allRepoUrls.length}: ${repoUrl}`);
         
-        await importBatch(start, end, batchProgress);
+        try {
+          // Try to add this repository
+          const result = await GitHubService.addProjectFromGitHub(repoUrl);
+          
+          if (result.success && result.agent) {
+            foundProjects.push(result.agent);
+            setImportedProjects([...foundProjects]);
+          }
+        } catch (error) {
+          console.error('Error adding repository:', error);
+        }
+        
+        // Slight delay to avoid overwhelming the UI with updates
+        await new Promise(resolve => setTimeout(resolve, 300));
       }
       
       // Finalize import
@@ -105,13 +144,8 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
         onProjectsAdded(foundProjects);
       }
       
-      // Auto-close after completion
-      setTimeout(() => {
-        setIsOpen(false);
-        setIsLoading(false);
-        setProgress(0);
-        setStatus('');
-      }, 2000);
+      // Show satisfaction query
+      setShowSatisfactionQuery(true);
       
     } catch (error) {
       console.error('Error during bulk import:', error);
@@ -121,6 +155,7 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
         variant: 'destructive',
       });
       setIsLoading(false);
+      setShowSatisfactionQuery(true);
     }
   };
 
@@ -136,8 +171,73 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
     await simulateGoogleSearch(searchTerms);
   };
 
+  const handleManualImport = async () => {
+    if (!manualUrl.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Please enter a valid GitHub URL',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    setProgress(20);
+    setStatus('Processing manual import...');
+    
+    try {
+      const result = await GitHubService.addProjectFromGitHub(manualUrl);
+      setProgress(80);
+      
+      if (result.success && result.agent) {
+        setImportedProjects(prev => [...prev, result.agent]);
+        
+        toast({
+          title: 'Import Successful',
+          description: `Successfully added ${result.agent.name}`,
+        });
+        
+        if (onProjectsAdded) {
+          onProjectsAdded([result.agent]);
+        }
+      } else {
+        toast({
+          title: 'Import Failed',
+          description: result.error || 'Failed to add repository',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error during manual import:', error);
+      toast({
+        title: 'Import Failed',
+        description: 'An error occurred while adding the repository',
+        variant: 'destructive',
+      });
+    } finally {
+      setProgress(100);
+      setIsLoading(false);
+      setManualUrl('');
+    }
+  };
+
+  const resetState = () => {
+    setIsLoading(false);
+    setProgress(0);
+    setStatus('');
+    setShowSatisfactionQuery(false);
+    setShowManualInput(false);
+  };
+
+  const handleModalClose = (open: boolean) => {
+    if (!open) {
+      resetState();
+    }
+    setIsOpen(open);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleModalClose}>
       <DialogTrigger asChild>
         <Button variant="outline" className="flex items-center gap-2">
           <Search className="w-4 h-4" />
@@ -148,8 +248,10 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
         <DialogHeader>
           <DialogTitle>Bulk Import AI Agent Projects</DialogTitle>
           <DialogDescription>
-            Search and import AI agent and MCP projects from Google automatically.
-            This will search for repositories containing terms like "AI Agent", "MCP", etc.
+            {!showManualInput ? 
+              "Search and import AI agent and MCP projects automatically. This will search for repositories containing terms like \"AI Agent\", \"MCP\", etc." :
+              "Enter the GitHub URL of an AI agent or MCP project to add it directly."
+            }
           </DialogDescription>
         </DialogHeader>
         
@@ -180,11 +282,74 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
                 </div>
               )}
             </div>
+          ) : showSatisfactionQuery ? (
+            <div className="space-y-4">
+              <p className="text-sm">Are you satisfied with the import results?</p>
+              <div className="flex gap-3">
+                <Button 
+                  variant="default" 
+                  onClick={() => {
+                    setIsOpen(false);
+                    resetState();
+                  }}
+                >
+                  Yes, I'm satisfied
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowManualInput(true)}
+                >
+                  No, add manually
+                </Button>
+              </div>
+            </div>
+          ) : showManualInput ? (
+            <div className="space-y-4">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="manualUrl" className="text-sm font-medium">
+                  GitHub Repository URL
+                </label>
+                <div className="flex gap-2">
+                  <Input
+                    id="manualUrl"
+                    placeholder="https://github.com/username/repository"
+                    value={manualUrl}
+                    onChange={e => setManualUrl(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button 
+                    onClick={handleManualImport}
+                    disabled={isLoading || !manualUrl.trim()}
+                  >
+                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Link className="mr-2 h-4 w-4" />}
+                    Add
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2 p-2 bg-blue-50 text-blue-700 rounded">
+                <AlertCircle className="h-4 w-4" />
+                <p className="text-xs">
+                  Enter the GitHub URL of an AI agent project you want to add. The repository should include terms like "AI agent" or "MCP" in its description.
+                </p>
+              </div>
+              
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => {
+                  setShowManualInput(false);
+                  setShowSatisfactionQuery(false);
+                }}
+              >
+                Go back to bulk import
+              </Button>
+            </div>
           ) : (
             <div className="space-y-4">
               <p className="text-sm">
-                This will search Google for AI agent and MCP projects up to the 20th page
-                of results, looking for repositories that match our criteria.
+                This will search for AI agent and MCP projects up to the 25th page
+                of search results, looking for repositories that match our criteria.
               </p>
               <p className="text-sm font-medium">
                 Search will include terms:
@@ -201,16 +366,16 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
         </div>
         
         <DialogFooter>
-          {!isLoading ? (
+          {!isLoading && !showSatisfactionQuery && !showManualInput ? (
             <Button onClick={handleBulkImport} disabled={isLoading}>
               Start Bulk Import
             </Button>
-          ) : (
+          ) : isLoading ? (
             <Button disabled>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Importing...
             </Button>
-          )}
+          ) : null}
         </DialogFooter>
       </DialogContent>
     </Dialog>
