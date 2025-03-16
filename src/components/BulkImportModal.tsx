@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Button } from './ui/button';
@@ -24,54 +23,70 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualUrl, setManualUrl] = useState('');
 
-  // Mock search results data based on real GitHub AI agent projects
-  // In a real implementation, this would be fetched from an API
   const searchGithub = async (term: string): Promise<string[]> => {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 800));
-    
-    // Return a subset of repository URLs for each search term
-    // These are based on real repositories related to AI agents
-    const realRepoUrls: Record<string, string[]> = {
-      'AI Agent GitHub': [
-        'https://github.com/Significant-Gravitas/Auto-GPT',
-        'https://github.com/yoheinakajima/babyagi',
-        'https://github.com/reworkd/AgentGPT',
-        'https://github.com/joaomdmoura/crewAI'
-      ],
-      'MCP GitHub': [
-        'https://github.com/AgentMCP/mcp-framework',
-        'https://github.com/microsoft/semantic-kernel',
-        'https://github.com/microsoft/TaskWeaver',
-        'https://github.com/milvus-io/pymilvus'
-      ],
-      'autonomous AI agent GitHub': [
-        'https://github.com/TransformerOptimus/SuperAGI',
-        'https://github.com/OpenBMB/XAgent',
-        'https://github.com/Torantulino/Auto-GPT-Plugin-Template',
-        'https://github.com/OpenDevin/OpenDevin'
-      ],
-      'AI assistant GitHub': [
-        'https://github.com/langchain-ai/langchainjs',
-        'https://github.com/deepset-ai/haystack',
-        'https://github.com/geekan/MetaGPT',
-        'https://github.com/imartinez/privateGPT'
-      ],
-      'LLM agent GitHub': [
-        'https://github.com/run-llama/llama_index',
-        'https://github.com/hwchase17/langchain',
-        'https://github.com/mlc-ai/mlc-llm',
-        'https://github.com/ggerganov/llama.cpp'
-      ]
-    };
-    
-    // Return the repositories for the given search term, or a default set if not found
-    return realRepoUrls[term] || [
-      'https://github.com/microsoft/guidance',
-      'https://github.com/chroma-core/chroma',
-      'https://github.com/pola-rs/polars',
-      'https://github.com/lm-sys/FastChat'
-    ];
+    try {
+      // Add a random delay between 1-3 seconds to avoid being blocked
+      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+      
+      const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(term)}+site:github.com`;
+      const response = await fetch(searchUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+          'DNT': '1',
+          'Connection': 'keep-alive',
+          'Upgrade-Insecure-Requests': '1',
+          'Sec-Fetch-Dest': 'document',
+          'Sec-Fetch-Mode': 'navigate',
+          'Sec-Fetch-Site': 'none',
+          'Sec-Fetch-User': '?1',
+          'Cache-Control': 'max-age=0'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Search request failed with status: ${response.status}`);
+      }
+
+      const html = await response.text();
+
+      // More comprehensive regex pattern for GitHub repository URLs
+      const urlRegex = /https?:\/\/(?:www\.)?github\.com\/[a-zA-Z0-9-]+\/[a-zA-Z0-9-._]+(?:\/)?(?!\S)/g;
+      const matches = html.match(urlRegex) || [];
+
+      // Clean and validate URLs
+      const repoUrls = matches
+        .map(url => {
+          try {
+            // Remove trailing slashes and fragments
+            const cleanUrl = url.replace(/\/$/, '').split('#')[0];
+            const parsedUrl = new URL(cleanUrl);
+            
+            // Ensure it's a valid GitHub repository URL
+            if (parsedUrl.hostname === 'github.com' && 
+                parsedUrl.pathname.split('/').filter(Boolean).length >= 2 && 
+                !cleanUrl.includes('/issues/') && 
+                !cleanUrl.includes('/pull/') &&
+                !cleanUrl.includes('/wiki/') &&
+                !cleanUrl.includes('/releases/') &&
+                !cleanUrl.includes('/actions/') &&
+                !cleanUrl.includes('/projects/') &&
+                !cleanUrl.includes('/settings/')) {
+              return cleanUrl;
+            }
+            return null;
+          } catch {
+            return null;
+          }
+        })
+        .filter((url): url is string => url !== null);
+
+      return [...new Set(repoUrls)];
+    } catch (error) {
+      console.error('Error searching GitHub repositories:', error);
+      throw error;
+    }
   };
 
   const simulateGoogleSearch = async (searchTerms: string[]) => {
@@ -80,78 +95,117 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
     setImportedProjects([]);
     setTotalFound(0);
     setShowSatisfactionQuery(false);
-    
+
     try {
-      // Simulate searching Google for each search term
       let allRepoUrls: string[] = [];
-      
-      for (let i = 0; i < searchTerms.length; i++) {
-        const term = searchTerms[i];
-        setStatus(`Searching for "${term}"... (${i + 1}/${searchTerms.length})`);
-        setProgress(Math.floor((i / searchTerms.length) * 30));
-        
-        // Get repository URLs for this search term
-        const repoUrls = await searchGithub(term);
-        allRepoUrls = [...allRepoUrls, ...repoUrls];
-        
-        // Remove duplicates
-        allRepoUrls = [...new Set(allRepoUrls)];
+      const searchQueries = [
+        'AI Agent GitHub repository',
+        'GitHub MCP framework',
+        'autonomous AI agent GitHub',
+        'AI assistant open source',
+        'LLM agent framework GitHub',
+        'multi agent system GitHub',
+        'agent based AI GitHub'
+      ];
+
+      let successfulSearches = 0;
+      let failedSearches = 0;
+
+      for (let i = 0; i < searchQueries.length; i++) {
+        const term = searchQueries[i];
+        setStatus(`Searching for "${term}"... (${i + 1}/${searchQueries.length})`);
+        setProgress(Math.floor((i / searchQueries.length) * 30));
+
+        try {
+          const repoUrls = await searchGithub(term);
+          allRepoUrls = [...allRepoUrls, ...repoUrls];
+          allRepoUrls = [...new Set(allRepoUrls)];
+          successfulSearches++;
+        } catch (error) {
+          console.error(`Error searching for "${term}":`, error);
+          failedSearches++;
+          
+          // Show warning toast but continue with other queries
+          toast({
+            title: 'Search Warning',
+            description: `Failed to search for "${term}". Continuing with remaining terms.`,
+            variant: 'destructive',
+          });
+          
+          // If too many failures, stop searching
+          if (failedSearches > 3) {
+            throw new Error('Too many failed searches. Please try again later.');
+          }
+        }
+
+        // Add a delay between searches
+        if (i < searchQueries.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
       }
-      
+
+      if (successfulSearches === 0) {
+        throw new Error('All searches failed. Please try again later.');
+      }
+
       setTotalFound(allRepoUrls.length);
       setStatus(`Found ${allRepoUrls.length} potential GitHub repositories. Analyzing...`);
       setProgress(30);
-      
-      // Process each repository URL
+
       let foundProjects: Agent[] = [];
-      
-      for (let i = 0; i < allRepoUrls.length; i++) {
-        const repoUrl = allRepoUrls[i];
-        const currentProgress = 30 + Math.floor((i / allRepoUrls.length) * 65);
+      let processedCount = 0;
+
+      for (const repoUrl of allRepoUrls) {
+        const currentProgress = 30 + Math.floor((processedCount / allRepoUrls.length) * 65);
         setProgress(currentProgress);
-        setStatus(`Processing repository ${i + 1} of ${allRepoUrls.length}: ${repoUrl}`);
-        
+        setStatus(`Processing repository ${processedCount + 1} of ${allRepoUrls.length}: ${repoUrl}`);
+
         try {
-          // Try to add this repository
           const result = await GitHubService.addProjectFromGitHub(repoUrl);
-          
           if (result.success && result.agent) {
             foundProjects.push(result.agent);
             setImportedProjects([...foundProjects]);
           }
         } catch (error) {
-          console.error('Error adding repository:', error);
+          console.error(`Error processing repository ${repoUrl}:`, error);
         }
-        
-        // Slight delay to avoid overwhelming the UI with updates
+
+        processedCount++;
         await new Promise(resolve => setTimeout(resolve, 300));
       }
-      
-      // Finalize import
+
+      if (foundProjects.length === 0) {
+        toast({
+          title: 'No Results',
+          description: 'No valid AI agent repositories were found. Try adjusting the search terms.',
+          variant: 'destructive',
+        });
+        setIsLoading(false);
+        return;
+      }
+
       setStatus('Finalizing import...');
       setProgress(95);
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       setStatus('Import complete!');
       setProgress(100);
-      
+
       toast({
         title: 'Bulk Import Complete',
         description: `Successfully imported ${foundProjects.length} AI agent projects`,
       });
-      
+
       if (onProjectsAdded && foundProjects.length > 0) {
         onProjectsAdded(foundProjects);
       }
-      
-      // Show satisfaction query
+
       setShowSatisfactionQuery(true);
-      
     } catch (error) {
       console.error('Error during bulk import:', error);
       toast({
         title: 'Import Failed',
-        description: 'An error occurred during the bulk import process',
+        description: error instanceof Error ? error.message : 'An error occurred during the bulk import process',
         variant: 'destructive',
       });
       setIsLoading(false);
@@ -159,50 +213,11 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
     }
   };
 
-const handleBulkImport = async () => {
-  setIsLoading(true);
-  setStatus('Searching Google...');
-  
-  try {
-    const response = await fetch(`/api/scrape?query=AI+Agent+GitHub+MCP+autonomous+AI+assistant+LLM`);
-    const data = await response.json();
-
-    if (data.results && data.results.length > 0) {
-      const imported = data.results.map((item: any) => ({
-        name: item.title,
-        url: item.link,
-        owner: new URL(item.link).pathname.split('/')[1],
-      }));
-      setImportedProjects(imported);
-      setTotalFound(imported.length);
-      setStatus('Import completed successfully!');
-
-      if (onProjectsAdded) {
-        onProjectsAdded(imported);
-      }
-
-      toast({
-        title: 'Import Successful',
-        description: `${imported.length} repositories imported successfully.`,
-      });
-    } else {
-      toast({
-        title: 'No results',
-        description: 'No repositories found to import.',
-        variant: 'destructive',
-      });
-    }
-  } catch (error) {
-    toast({
-      title: 'Import Failed',
-      description: 'An error occurred while importing. Please retry.',
-      variant: 'destructive',
-    });
-  } finally {
-    setIsLoading(false);
-    setShowSatisfactionQuery(true);
-  }
-};
+  const handleBulkImport = async () => {
+    setIsLoading(true);
+    setStatus('Searching GitHub...');
+    simulateGoogleSearch([]);
+  };
 
   const resetState = () => {
     setIsLoading(false);
@@ -341,8 +356,8 @@ const handleBulkImport = async () => {
                 <li>AI Agent GitHub</li>
                 <li>MCP GitHub</li>
                 <li>Autonomous AI agent GitHub</li>
-                <li>AI assistant GitHub</li>
-                <li>LLM agent GitHub</li>
+                <li>AI assistant repository</li>
+                <li>LLM agent framework</li>
               </ul>
             </div>
           )}
