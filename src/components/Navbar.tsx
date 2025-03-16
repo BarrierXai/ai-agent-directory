@@ -1,13 +1,13 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, GitHub } from 'lucide-react';
+import { Menu, X, Github } from 'lucide-react';
 import { Button } from './ui/button';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   const location = useLocation();
 
   // Close mobile menu when route changes
@@ -49,7 +49,7 @@ const Navbar = () => {
               rel="noopener noreferrer" 
               className="text-gray-700 hover:text-blue-600 flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              <GitHub className="w-4 h-4" />
+              <Github className="w-4 h-4" />
               <span>GitHub</span>
             </a>
           </div>
@@ -97,7 +97,7 @@ const Navbar = () => {
               rel="noopener noreferrer"
               className="text-gray-700 hover:bg-gray-100 flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium"
             >
-              <GitHub className="w-4 h-4" />
+              <Github className="w-4 h-4" />
               <span>GitHub</span>
             </a>
           </div>
