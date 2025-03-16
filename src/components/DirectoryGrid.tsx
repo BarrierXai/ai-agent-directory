@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import PaginationControl from './PaginationControl';
 import { paginateData } from '../utils/pagination';
 import { toast } from '@/components/ui/use-toast';
+import AddProjectForm from './AddProjectForm';
 
 interface DirectoryGridProps {
   initialSearchQuery?: string;
@@ -192,6 +193,15 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
       setIsRefreshing(false);
     }
   };
+  
+  const handleProjectAdded = (newAgent: Agent) => {
+    setAgents(prevAgents => [newAgent, ...prevAgents]);
+    
+    toast({
+      title: "Success",
+      description: `${newAgent.name} has been added to the directory.`,
+    });
+  };
 
   return (
     <div ref={directoryRef} className="py-8 px-4 md:px-8 max-w-7xl mx-auto">
@@ -209,12 +219,13 @@ const DirectoryGrid = ({ initialSearchQuery = '' }: DirectoryGridProps) => {
             <h2 className="text-2xl font-bold text-gray-900">
               {filterOptions.searchQuery 
                 ? `Results for "${filterOptions.searchQuery}"`
-                : 'Featured AI Agent Projects'}
+                : 'AI Agent Projects Directory'}
             </h2>
             <div className="flex items-center gap-2">
               <div className="text-sm text-gray-500">
                 {filteredAgents.length} {filteredAgents.length === 1 ? 'project' : 'projects'}
               </div>
+              <AddProjectForm onProjectAdded={handleProjectAdded} />
               <Button 
                 variant="outline" 
                 size="sm" 

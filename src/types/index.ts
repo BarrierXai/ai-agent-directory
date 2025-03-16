@@ -22,3 +22,9 @@ export interface FilterOptions {
   sort: SortOption;
   searchQuery: string;
 }
+
+export interface ProjectSubmissionResponse {
+  success: boolean;
+  error?: string;
+  agent?: Agent;
+}

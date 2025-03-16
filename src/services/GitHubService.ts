@@ -1,6 +1,7 @@
 
 import { Agent } from '../types';
 
+// Real data for AI Agent projects
 const REAL_PROJECTS: Agent[] = [
   {
     id: '1',
@@ -116,104 +117,6 @@ const REAL_PROJECTS: Agent[] = [
   },
   {
     id: '9',
-    name: 'LLaMA',
-    description: 'Meta\'s collection of foundation language models',
-    stars: 54900,
-    forks: 7900,
-    url: 'https://github.com/facebookresearch/llama',
-    owner: 'facebookresearch',
-    avatar: 'https://avatars.githubusercontent.com/u/16943930?v=4',
-    language: 'Python',
-    updated: '2024-05-05',
-    topics: ['llm', 'ai', 'language-model', 'meta'],
-    license: 'Meta AI LLAMA 2 COMMUNITY LICENSE AGREEMENT'
-  },
-  {
-    id: '10',
-    name: 'Semantic Kernel',
-    description: 'Microsoft\'s open-source orchestration SDK for AI models',
-    stars: 17100,
-    forks: 2200,
-    url: 'https://github.com/microsoft/semantic-kernel',
-    owner: 'microsoft',
-    avatar: 'https://avatars.githubusercontent.com/u/6154722?v=4',
-    language: 'C#',
-    updated: '2024-05-21',
-    topics: ['ai', 'semantic', 'kernel', 'microsoft'],
-    license: 'MIT'
-  },
-  {
-    id: '11',
-    name: 'GPT4All',
-    description: 'Open-source assistant-style large language models that run locally on CPU',
-    stars: 60100,
-    forks: 6700,
-    url: 'https://github.com/nomic-ai/gpt4all',
-    owner: 'nomic-ai',
-    avatar: 'https://avatars.githubusercontent.com/u/99795015?v=4',
-    language: 'C++',
-    updated: '2024-05-15',
-    topics: ['llm', 'ai', 'gpt', 'language-model'],
-    license: 'MIT'
-  },
-  {
-    id: '12',
-    name: 'LiteLLM',
-    description: 'Call all LLM APIs using the OpenAI format',
-    stars: 5300,
-    forks: 730,
-    url: 'https://github.com/BerriAI/litellm',
-    owner: 'BerriAI',
-    avatar: 'https://avatars.githubusercontent.com/u/132539786?v=4',
-    language: 'Python',
-    updated: '2024-05-18',
-    topics: ['llm', 'ai', 'openai', 'api'],
-    license: 'MIT'
-  },
-  {
-    id: '13',
-    name: 'llama.cpp',
-    description: 'Port of Facebook\'s LLaMA model in C/C++',
-    stars: 51300,
-    forks: 7800,
-    url: 'https://github.com/ggerganov/llama.cpp',
-    owner: 'ggerganov',
-    avatar: 'https://avatars.githubusercontent.com/u/1991296?v=4',
-    language: 'C++',
-    updated: '2024-05-21',
-    topics: ['llm', 'ai', 'language-model', 'cpp'],
-    license: 'MIT'
-  },
-  {
-    id: '14',
-    name: 'MiniAGI',
-    description: 'A minimal autonomous agent that can perform web research via search engines',
-    stars: 730,
-    forks: 120,
-    url: 'https://github.com/muellerberndt/mini-agi',
-    owner: 'muellerberndt',
-    avatar: 'https://avatars.githubusercontent.com/u/559386?v=4',
-    language: 'Python',
-    updated: '2024-03-10',
-    topics: ['ai', 'agent', 'autonomous', 'research'],
-    license: 'MIT'
-  },
-  {
-    id: '15',
-    name: 'MetaGPT',
-    description: 'The Multi-Agent Framework: Given one line requirement, generate PRD, design, tasks, and repo',
-    stars: 35200,
-    forks: 4200,
-    url: 'https://github.com/geekan/MetaGPT',
-    owner: 'geekan',
-    avatar: 'https://avatars.githubusercontent.com/u/2747893?v=4',
-    language: 'Python',
-    updated: '2024-05-19',
-    topics: ['agents', 'multi-agent', 'ai', 'llm'],
-    license: 'MIT'
-  },
-  {
-    id: '16',
     name: 'LlamaIndex',
     description: 'Data framework for building LLM applications with complex data',
     stars: 33600,
@@ -227,7 +130,21 @@ const REAL_PROJECTS: Agent[] = [
     license: 'MIT'
   },
   {
-    id: '17',
+    id: '10',
+    name: 'MetaGPT',
+    description: 'The Multi-Agent Framework: Given one line requirement, generate PRD, design, tasks, and repo',
+    stars: 35200,
+    forks: 4200,
+    url: 'https://github.com/geekan/MetaGPT',
+    owner: 'geekan',
+    avatar: 'https://avatars.githubusercontent.com/u/2747893?v=4',
+    language: 'Python',
+    updated: '2024-05-19',
+    topics: ['agents', 'multi-agent', 'ai', 'llm'],
+    license: 'MIT'
+  },
+  {
+    id: '11',
     name: 'XAgent',
     description: 'An Autonomous AI Agent for complex task-solving with tool-use and human feedback',
     stars: 11200,
@@ -241,7 +158,7 @@ const REAL_PROJECTS: Agent[] = [
     license: 'Apache-2.0'
   },
   {
-    id: '18',
+    id: '12',
     name: 'ChatDev',
     description: 'Create customized software using natural language',
     stars: 20200,
@@ -255,67 +172,35 @@ const REAL_PROJECTS: Agent[] = [
     license: 'Apache-2.0'
   },
   {
-    id: '19',
-    name: 'LocalAGI',
-    description: 'Personal AGI that runs 100% locally',
-    stars: 3500,
-    forks: 350,
-    url: 'https://github.com/EmbraceAGI/LocalAGI',
-    owner: 'EmbraceAGI',
-    avatar: 'https://avatars.githubusercontent.com/u/129526357?v=4',
-    language: 'Python',
-    updated: '2024-04-10',
-    topics: ['agi', 'local', 'privacy', 'autonomous-agents'],
-    license: 'MIT'
+    id: '13',
+    name: 'MLC LLM',
+    description: 'Run large language models locally on phones, laptops, and edge devices',
+    stars: 14200,
+    forks: 1600,
+    url: 'https://github.com/mlc-ai/mlc-llm',
+    owner: 'mlc-ai',
+    avatar: 'https://avatars.githubusercontent.com/u/103401051?v=4',
+    language: 'C++',
+    updated: '2024-05-16',
+    topics: ['llm', 'edge-computing', 'optimization'],
+    license: 'Apache-2.0'
   },
   {
-    id: '20',
-    name: 'HuggingFace Transformers',
-    description: 'State-of-the-art Machine Learning for Pytorch, TensorFlow, and JAX',
-    stars: 120700,
-    forks: 24300,
-    url: 'https://github.com/huggingface/transformers',
-    owner: 'huggingface',
-    avatar: 'https://avatars.githubusercontent.com/u/25720743?v=4',
-    language: 'Python',
+    id: '14',
+    name: 'Llama.cpp',
+    description: 'Port of Facebook\'s LLaMA model in C/C++',
+    stars: 51300,
+    forks: 7800,
+    url: 'https://github.com/ggerganov/llama.cpp',
+    owner: 'ggerganov',
+    avatar: 'https://avatars.githubusercontent.com/u/1991296?v=4',
+    language: 'C++',
     updated: '2024-05-21',
-    topics: ['nlp', 'machine-learning', 'transformers', 'ai'],
-    license: 'Apache-2.0'
-  }
-];
-
-// Generate additional real-like AI projects with randomized but plausible values
-const ADDITIONAL_PROJECTS: Agent[] = [
-  {
-    id: '21',
-    name: 'OpenAI Assistants',
-    description: 'Tools for building AI assistants with OpenAI models',
-    stars: 12700,
-    forks: 1800,
-    url: 'https://github.com/openai/openai-python',
-    owner: 'openai',
-    avatar: 'https://avatars.githubusercontent.com/u/14957082?v=4',
-    language: 'Python',
-    updated: '2024-05-20',
-    topics: ['ai', 'assistants', 'openai', 'api'],
+    topics: ['llm', 'ai', 'language-model', 'cpp'],
     license: 'MIT'
   },
   {
-    id: '22',
-    name: 'MistralAI',
-    description: 'The official Mistral AI Python client library',
-    stars: 3200,
-    forks: 340,
-    url: 'https://github.com/mistralai/mistral-python',
-    owner: 'mistralai',
-    avatar: 'https://avatars.githubusercontent.com/u/140400344?v=4',
-    language: 'Python',
-    updated: '2024-05-18',
-    topics: ['llm', 'mistral', 'ai', 'language-model'],
-    license: 'Apache-2.0'
-  },
-  {
-    id: '23',
+    id: '15',
     name: 'Ollama',
     description: 'Get up and running with Llama 2, Mistral, and other large language models locally',
     stars: 49200,
@@ -327,45 +212,20 @@ const ADDITIONAL_PROJECTS: Agent[] = [
     updated: '2024-05-21',
     topics: ['llm', 'local', 'language-model', 'inference'],
     license: 'MIT'
-  },
-  {
-    id: '24',
-    name: 'LM Studio',
-    description: 'Run local LLMs on consumer hardware',
-    stars: 7300,
-    forks: 480,
-    url: 'https://github.com/lmstudio-ai/lmstudio',
-    owner: 'lmstudio-ai',
-    avatar: 'https://avatars.githubusercontent.com/u/129783575?v=4',
-    language: 'TypeScript',
-    updated: '2024-05-15',
-    topics: ['llm', 'studio', 'local', 'inference'],
-    license: 'MIT'
-  },
-  {
-    id: '25',
-    name: 'PrivateGPT',
-    description: 'Interact with your documents using the power of LLMs, 100% privately',
-    stars: 48200,
-    forks: 6500,
-    url: 'https://github.com/imartinez/privateGPT',
-    owner: 'imartinez',
-    avatar: 'https://avatars.githubusercontent.com/u/123928?v=4',
-    language: 'Python',
-    updated: '2024-05-16',
-    topics: ['privacy', 'llm', 'rag', 'document-processing'],
-    license: 'Apache-2.0'
-  },
+  }
 ];
 
-// Combine real projects with additional projects
-const ALL_PROJECTS = [...REAL_PROJECTS, ...ADDITIONAL_PROJECTS];
+// Data store for user-submitted projects
+let USER_SUBMITTED_PROJECTS: Agent[] = [];
+
+// Combine all projects
+const getAllProjects = () => [...REAL_PROJECTS, ...USER_SUBMITTED_PROJECTS];
 
 class GitHubService {
   static fetchAgents(): Promise<Agent[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(ALL_PROJECTS);
+        resolve(getAllProjects());
       }, 500);
     });
   }
@@ -374,7 +234,7 @@ class GitHubService {
     return new Promise((resolve) => {
       setTimeout(() => {
         const normalizedQuery = query.toLowerCase().trim();
-        const results = ALL_PROJECTS.filter(agent => {
+        const results = getAllProjects().filter(agent => {
           const inName = agent.name.toLowerCase().includes(normalizedQuery);
           const inDescription = agent.description.toLowerCase().includes(normalizedQuery);
           const inTopics = agent.topics.some(topic => topic.toLowerCase().includes(normalizedQuery));
@@ -409,7 +269,7 @@ class GitHubService {
   static refreshAgentData(): Promise<{timestamp: string, agents: Agent[]}> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const refreshedAgents = [...ALL_PROJECTS];
+        const refreshedAgents = getAllProjects();
         const timestamp = new Date().toISOString();
         localStorage.setItem('lastAgentRefresh', timestamp);
         resolve({ timestamp, agents: refreshedAgents });
@@ -421,7 +281,7 @@ class GitHubService {
     return new Promise((resolve) => {
       setTimeout(() => {
         // Filter for projects explicitly related to AI Agents or MCP
-        const agentMcpProjects = ALL_PROJECTS.filter(agent => {
+        const agentMcpProjects = getAllProjects().filter(agent => {
           const topics = agent.topics.map(topic => topic.toLowerCase());
           const nameAndDesc = (agent.name + ' ' + agent.description).toLowerCase();
           return topics.some(t => t.includes('agent') || t.includes('mcp') || t.includes('autonomous')) || 
@@ -435,6 +295,93 @@ class GitHubService {
           
         resolve(topProjects);
       }, 300);
+    });
+  }
+  
+  static addProjectFromGitHub(url: string): Promise<{success: boolean, error?: string, agent?: Agent}> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        try {
+          // Extract owner and repo name from GitHub URL
+          const urlObj = new URL(url);
+          const pathParts = urlObj.pathname.split('/').filter(Boolean);
+          
+          if (pathParts.length < 2 || !url.includes('github.com')) {
+            resolve({
+              success: false,
+              error: 'Invalid GitHub URL format. Please use https://github.com/owner/repo'
+            });
+            return;
+          }
+          
+          const owner = pathParts[0];
+          const repoName = pathParts[1];
+          
+          // Check if project already exists
+          const existingProject = getAllProjects().find(
+            project => project.url.toLowerCase() === url.toLowerCase() || 
+                      (project.owner.toLowerCase() === owner.toLowerCase() && 
+                       project.name.toLowerCase() === repoName.toLowerCase())
+          );
+          
+          if (existingProject) {
+            resolve({
+              success: false,
+              error: 'This project is already in the directory'
+            });
+            return;
+          }
+          
+          // In a real implementation, we would fetch data from GitHub API
+          // For this demo, we'll create a simulated project with the provided URL
+          
+          // Simulate checking if description contains 'AI agent' or 'MCP'
+          // In real implementation, we would fetch repo description from GitHub API
+          const randomDescriptions = [
+            'An AI agent project for intelligent task automation',
+            'MCP-based framework for autonomous agents',
+            'Experimental AI agent for natural language processing',
+            'Machine learning framework with agent capabilities',
+            'AI multi-agent system for distributed problem solving'
+          ];
+          
+          const description = randomDescriptions[Math.floor(Math.random() * randomDescriptions.length)];
+          
+          // Generate random stats for demonstration
+          const stars = Math.floor(Math.random() * 5000);
+          const forks = Math.floor(Math.random() * 1000);
+          
+          // Create new agent entry
+          const newAgent: Agent = {
+            id: `user-${Date.now()}`,
+            name: repoName,
+            description,
+            stars,
+            forks,
+            url,
+            owner,
+            avatar: `https://github.com/${owner}.png`,
+            language: ['JavaScript', 'TypeScript', 'Python', 'Go', 'Rust'][Math.floor(Math.random() * 5)],
+            updated: new Date().toISOString(),
+            topics: ['ai', 'agent', 'machine-learning', 'autonomous', 'mcp'].sort(() => Math.random() - 0.5).slice(0, 3),
+            license: 'MIT'
+          };
+          
+          // Add to user submitted projects
+          USER_SUBMITTED_PROJECTS.push(newAgent);
+          
+          resolve({
+            success: true,
+            agent: newAgent
+          });
+        } catch (error) {
+          console.error('Error adding project:', error);
+          resolve({
+            success: false,
+            error: 'Failed to add project. Please try again.'
+          });
+        }
+      }, 800);
     });
   }
 }
