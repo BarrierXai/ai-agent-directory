@@ -1,4 +1,3 @@
-
 import { Agent } from '../types';
 
 // Real data for AI Agent projects
@@ -302,11 +301,44 @@ class GitHubService {
     return new Promise((resolve) => {
       setTimeout(() => {
         try {
+          // Validate URL first
+          if (!url || !url.trim()) {
+            resolve({
+              success: false,
+              error: 'URL is required'
+            });
+            return;
+          }
+          
+          // Make sure the URL starts with http:// or https://
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
+          }
+          
           // Extract owner and repo name from GitHub URL
-          const urlObj = new URL(url);
+          let urlObj: URL;
+          try {
+            urlObj = new URL(url);
+          } catch (error) {
+            resolve({
+              success: false,
+              error: 'Invalid URL format. Please provide a valid URL.'
+            });
+            return;
+          }
+          
+          // Check if it's a GitHub URL
+          if (!urlObj.hostname.includes('github.com')) {
+            resolve({
+              success: false,
+              error: 'URL must be a GitHub repository URL'
+            });
+            return;
+          }
+          
           const pathParts = urlObj.pathname.split('/').filter(Boolean);
           
-          if (pathParts.length < 2 || !url.includes('github.com')) {
+          if (pathParts.length < 2) {
             resolve({
               success: false,
               error: 'Invalid GitHub URL format. Please use https://github.com/owner/repo'
@@ -378,7 +410,7 @@ class GitHubService {
           console.error('Error adding project:', error);
           resolve({
             success: false,
-            error: 'Failed to add project. Please try again.'
+            error: error instanceof Error ? `Failed to add project: ${error.message}` : 'Failed to add project. Please try again.'
           });
         }
       }, 800);

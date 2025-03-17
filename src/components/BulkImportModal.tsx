@@ -5,7 +5,7 @@ import { Progress } from './ui/progress';
 import { toast } from './ui/use-toast';
 import { GitHubService } from '../services/GitHubService';
 import { Search, Loader2, Link, AlertCircle } from 'lucide-react';
-import { Agent } from '../types';
+import { Agent } from '../types/index';
 import { Input } from './ui/input';
 
 interface BulkImportModalProps {
@@ -39,6 +39,7 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualUrl, setManualUrl] = useState('');
   const [customSearchTerms, setCustomSearchTerms] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   // Simulated search that returns GitHub repo URLs rather than using the API
   const searchGithub = async (term: string): Promise<string[]> => {
@@ -76,6 +77,7 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
     setImportedProjects([]);
     setTotalFound(0);
     setShowSatisfactionQuery(false);
+    setError(null);
 
     try {
       let allRepoUrls: string[] = [];
@@ -132,11 +134,18 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
       }
 
       setTotalFound(allRepoUrls.length);
+      
+      // Check if we found any repositories
+      if (allRepoUrls.length === 0) {
+        throw new Error('No repositories found matching search criteria. Please try different search terms.');
+      }
+      
       setStatus(`Found ${allRepoUrls.length} potential GitHub repositories. Analyzing...`);
       setProgress(30);
 
       let foundProjects: Agent[] = [];
       let processedCount = 0;
+      let errorCount = 0;
 
       // Process each repo URL one by one
       for (const repoUrl of allRepoUrls) {
@@ -150,9 +159,19 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
           if (result.success && result.agent) {
             foundProjects.push(result.agent);
             setImportedProjects(prevProjects => [...prevProjects, result.agent]);
+          } else if (result.error) {
+            // Log the specific error but continue processing other URLs
+            console.warn(`Skipping repository ${repoUrl}: ${result.error}`);
+            errorCount++;
           }
         } catch (error) {
           console.error(`Error processing repository ${repoUrl}:`, error);
+          errorCount++;
+          
+          // Don't fail completely if just a few repositories fail
+          if (errorCount > allRepoUrls.length / 2) {
+            throw new Error('Too many errors processing repositories. Please try again later.');
+          }
         }
 
         processedCount++;
@@ -191,9 +210,11 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
       setIsLoading(false);
     } catch (error) {
       console.error('Error during bulk import:', error);
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred during the bulk import process';
+      setError(errorMessage);
       toast({
         title: 'Import Failed',
-        description: error instanceof Error ? error.message : 'An error occurred during the bulk import process',
+        description: errorMessage,
         variant: 'destructive',
       });
       setIsLoading(false);
@@ -215,7 +236,7 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
       console.error("Error in bulk import:", error);
       toast({
         title: 'Import Error',
-        description: 'Failed to complete the bulk import process. Please try again.',
+        description: error instanceof Error ? error.message : 'Failed to complete the bulk import process. Please try again.',
         variant: 'destructive',
       });
       setIsLoading(false);
@@ -234,6 +255,7 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
     setStatus('');
     setShowSatisfactionQuery(false);
     setShowManualInput(false);
+    setError(null);
   };
 
   const handleModalClose = (open: boolean) => {
@@ -304,7 +326,28 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        {!isLoading && importedProjects.length === 0 && (
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md flex items-start mb-4">
+            <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">Import Failed</p>
+              <p className="text-sm">{error}</p>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-2" 
+                onClick={() => {
+                  setError(null);
+                  handleBulkImport();
+                }}
+              >
+                Retry Import
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {!isLoading && importedProjects.length === 0 && !error && (
           <div className="space-y-4 py-4">
             <div>
               <h4 className="text-sm font-medium mb-2">Search Terms (one per line)</h4>
@@ -411,7 +454,7 @@ Each line will be used as a separate search query."
         )}
         
         <DialogFooter>
-          {!isLoading && !showSatisfactionQuery && !showManualInput ? (
+          {!isLoading && !showSatisfactionQuery && !showManualInput && !error ? (
             <Button onClick={handleBulkImport} disabled={isLoading}>
               Start Bulk Import
             </Button>
