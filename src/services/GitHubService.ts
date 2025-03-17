@@ -419,3 +419,51 @@ class GitHubService {
 }
 
 export { GitHubService };
+            'AI multi-agent system for distributed problem solving'
+          ];
+          
+          const description = randomDescriptions[Math.floor(Math.random() * randomDescriptions.length)];
+          
+          // Generate random stats for demonstration
+          const stars = Math.floor(Math.random() * 5000);
+          const forks = Math.floor(Math.random() * 1000);
+          
+          // Create new agent entry
+          const newAgent: Agent = {
+            id: `user-${Date.now()}`,
+            name: repoName,
+            description,
+            stars,
+            forks,
+            url: normalizedUrl, // Use the normalized URL
+            owner,
+            avatar: `https://github.com/${owner}.png`,
+            language: ['JavaScript', 'TypeScript', 'Python', 'Go', 'Rust'][Math.floor(Math.random() * 5)],
+            updated: new Date().toISOString(),
+            topics: ['ai', 'agent', 'machine-learning', 'autonomous', 'mcp'].sort(() => Math.random() - 0.5).slice(0, 3),
+            license: 'MIT'
+          };
+          
+          console.log('Successfully created agent:', newAgent);
+          
+          // Add to user submitted projects
+          USER_SUBMITTED_PROJECTS.push(newAgent);
+          console.log('Agent added to USER_SUBMITTED_PROJECTS');
+          
+          resolve({
+            success: true,
+            agent: newAgent
+          });
+        } catch (error) {
+          console.error('Unexpected error adding project:', error);
+          resolve({
+            success: false,
+            error: error instanceof Error ? `Failed to add project: ${error.message}` : 'Failed to add project. Please try again.'
+          });
+        }
+      }, 800);
+    });
+  }
+}
+
+export { GitHubService };
