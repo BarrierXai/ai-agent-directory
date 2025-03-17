@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
@@ -43,6 +43,7 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
   // Simulated search that returns GitHub repo URLs rather than using the API
   const searchGithub = async (term: string): Promise<string[]> => {
     try {
+      console.log(`Searching for: ${term}`);
       // Simulate finding a few GitHub repositories for each search term
       // This aligns with how GitHubService works (which uses simulated data)
       const simulatedRepos = [
@@ -54,7 +55,9 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
       
       // Add some randomness to make it seem more realistic
       const numResults = 2 + Math.floor(Math.random() * 3); // Between 2-4 results
-      return simulatedRepos.slice(0, numResults);
+      const results = simulatedRepos.slice(0, numResults);
+      console.log(`Found ${results.length} repos:`, results);
+      return results;
     } catch (error) {
       console.error('Error in simulated GitHub search:', error);
       toast({
@@ -67,6 +70,7 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
   };
 
   const simulateGoogleSearch = async (searchTerms: string[], customQueries?: string[]) => {
+    console.log('Starting bulk import with custom queries:', customQueries);
     setIsLoading(true);
     setProgress(0);
     setImportedProjects([]);
@@ -85,7 +89,8 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
         'multi agent system GitHub',
         'agent based AI GitHub'
       ];
-
+      
+      console.log('Using search queries:', searchQueries);
       let successfulSearches = 0;
       let failedSearches = 0;
 
@@ -95,6 +100,7 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
         setProgress(Math.floor((i / searchQueries.length) * 30));
 
         try {
+          // Get simulated GitHub repos for this search term
           const repoUrls = await searchGithub(term);
           allRepoUrls = [...allRepoUrls, ...repoUrls];
           allRepoUrls = [...new Set(allRepoUrls)]; // Remove duplicates
@@ -115,14 +121,14 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
           }
         }
 
-        // Add a delay between searches to avoid rate limiting
+        // Add a delay between searches
         if (i < searchQueries.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 500));
         }
       }
 
       if (successfulSearches === 0) {
-        throw new Error('All searches failed. Please check your GitHub token and try again later.');
+        throw new Error('All searches failed. Please try again later.');
       }
 
       setTotalFound(allRepoUrls.length);
@@ -132,16 +138,18 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
       let foundProjects: Agent[] = [];
       let processedCount = 0;
 
+      // Process each repo URL one by one
       for (const repoUrl of allRepoUrls) {
         const currentProgress = 30 + Math.floor((processedCount / allRepoUrls.length) * 65);
         setProgress(currentProgress);
         setStatus(`Processing repository ${processedCount + 1} of ${allRepoUrls.length}: ${repoUrl}`);
 
         try {
+          // Use GitHubService to process this URL
           const result = await GitHubService.addProjectFromGitHub(repoUrl);
           if (result.success && result.agent) {
             foundProjects.push(result.agent);
-            setImportedProjects([...foundProjects]);
+            setImportedProjects(prevProjects => [...prevProjects, result.agent]);
           }
         } catch (error) {
           console.error(`Error processing repository ${repoUrl}:`, error);
@@ -152,6 +160,7 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
       }
 
       if (foundProjects.length === 0) {
+        console.log('No projects found after processing all URLs');
         toast({
           title: 'No Results',
           description: 'No valid AI agent repositories were found. Try adjusting the search terms.',
@@ -161,6 +170,7 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
         return;
       }
 
+      console.log('Import successful:', foundProjects);
       setStatus('Finalizing import...');
       setProgress(95);
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -178,6 +188,7 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
       }
 
       setShowSatisfactionQuery(true);
+      setIsLoading(false);
     } catch (error) {
       console.error('Error during bulk import:', error);
       toast({
@@ -186,20 +197,36 @@ const BulkImportModal = ({ onProjectsAdded }: BulkImportModalProps) => {
         variant: 'destructive',
       });
       setIsLoading(false);
-      setShowSatisfactionQuery(true);
     }
   };
 
   const handleBulkImport = async () => {
     if (isLoading) return;
     
+    console.log('handleBulkImport called with custom terms:', customSearchTerms);
     // Parse custom search terms if provided
-    const searchTerms = customSearchTerms.trim() 
+    const customQueries = customSearchTerms.trim() 
       ? customSearchTerms.split('\n').filter(term => term.trim().length > 0)
       : undefined;
       
-    await simulateGoogleSearch([], searchTerms);
+    try {
+      await simulateGoogleSearch([], customQueries);
+    } catch (error) {
+      console.error("Error in bulk import:", error);
+      toast({
+        title: 'Import Error',
+        description: 'Failed to complete the bulk import process. Please try again.',
+        variant: 'destructive',
+      });
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    if (importedProjects.length > 0 && onProjectsAdded) {
+      console.log('Notifying parent component about imported projects:', importedProjects);
+    }
+  }, [importedProjects, onProjectsAdded]);
 
   const resetState = () => {
     setIsLoading(false);
